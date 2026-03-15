@@ -10,19 +10,28 @@ export function cn(...inputs: ClassValue[]) {
 interface CardProps {
   children: React.ReactNode;
   className?: string;
-  variant?: 'default' | 'elevated' | 'outlined';
+  variant?: 'default' | 'elevated' | 'outlined' | 'glass';
   onClick?: () => void;
 }
 
 export const Card: React.FC<CardProps> = ({ children, className, variant = 'default', onClick }) => {
   const variants = {
-    default: 'bg-white rounded-xl shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] border border-slate-100/50',
-    elevated: 'bg-white rounded-xl shadow-xl border border-slate-100/50',
-    outlined: 'bg-white rounded-xl border-2 border-slate-200',
+    default: 'bg-white rounded-2xl shadow-premium border border-slate-100/60 hover:shadow-premium-lg',
+    elevated: 'bg-white rounded-2xl shadow-premium-lg border border-slate-100/40',
+    outlined: 'bg-white rounded-2xl border-2 border-slate-200/80 hover:border-gold/30',
+    glass: 'glass-card rounded-2xl shadow-premium',
   };
 
   return (
-    <div onClick={onClick} className={cn(variants[variant], onClick && 'cursor-pointer', className)}>
+    <div
+      onClick={onClick}
+      className={cn(
+        variants[variant],
+        'transition-all duration-300',
+        onClick && 'cursor-pointer active:scale-[0.99]',
+        className
+      )}
+    >
       {children}
     </div>
   );
@@ -49,11 +58,11 @@ export const Button: React.FC<ButtonProps> = ({
   style,
 }) => {
   const variants = {
-    primary: 'bg-navy text-white hover:bg-navy-dark shadow-md',
-    secondary: 'bg-slate-100 text-navy hover:bg-slate-200',
-    accent: 'bg-gold text-white hover:bg-gold-dark shadow-md shadow-gold/20',
-    danger: 'bg-red-500 text-white hover:bg-red-600',
-    success: 'bg-emerald-600 text-white hover:bg-emerald-700',
+    primary: 'bg-navy text-white hover:bg-navy-light shadow-navy hover:shadow-lg',
+    secondary: 'bg-slate-100 text-navy hover:bg-slate-200 border border-slate-200/60',
+    accent: 'gradient-gold text-navy-dark font-extrabold shadow-gold hover:shadow-lg hover:brightness-105',
+    danger: 'bg-red-500 text-white hover:bg-red-600 shadow-sm',
+    success: 'bg-emerald-600 text-white hover:bg-emerald-700 shadow-sm',
     ghost: 'bg-transparent text-navy hover:bg-slate-100',
     outline: 'bg-transparent border-2 border-slate-200 text-slate-500 hover:border-navy hover:text-navy',
   };
@@ -65,9 +74,9 @@ export const Button: React.FC<ButtonProps> = ({
       disabled={disabled}
       style={style}
       className={cn(
-        'px-5 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all duration-300 transform active:scale-95',
+        'px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all duration-300 transform active:scale-[0.97] inline-flex items-center justify-center gap-2',
         variants[variant],
-        disabled && 'opacity-50 cursor-not-allowed pointer-events-none',
+        disabled && 'opacity-40 cursor-not-allowed pointer-events-none saturate-0',
         className
       )}
     >
@@ -85,21 +94,33 @@ interface BadgeProps {
 
 export const Badge: React.FC<BadgeProps> = ({ children, variant = 'default', size = 'md' }) => {
   const variants = {
-    success: 'bg-emerald-100 text-emerald-800',
-    warning: 'bg-amber-100 text-amber-800',
-    error: 'bg-red-100 text-red-800',
-    info: 'bg-blue-100 text-blue-800',
-    default: 'bg-slate-100 text-slate-800',
+    success: 'bg-emerald-50 text-emerald-700 border border-emerald-200/60 ring-1 ring-emerald-100',
+    warning: 'bg-amber-50 text-amber-700 border border-amber-200/60 ring-1 ring-amber-100',
+    error: 'bg-red-50 text-red-700 border border-red-200/60 ring-1 ring-red-100',
+    info: 'bg-blue-50 text-blue-700 border border-blue-200/60 ring-1 ring-blue-100',
+    default: 'bg-slate-50 text-slate-600 border border-slate-200/60 ring-1 ring-slate-100',
   };
 
   const sizes = {
-    sm: 'px-1.5 py-0.5 text-[10px]',
-    md: 'px-2.5 py-1 text-xs',
-    lg: 'px-3 py-1.5 text-sm',
+    sm: 'px-2 py-0.5 text-[10px]',
+    md: 'px-3 py-1 text-xs',
+    lg: 'px-4 py-1.5 text-sm',
   };
 
   return (
-    <span className={cn('rounded-full font-semibold inline-flex items-center', variants[variant], sizes[size])}>
+    <span className={cn(
+      'rounded-full font-semibold inline-flex items-center gap-1 whitespace-nowrap',
+      variants[variant],
+      sizes[size]
+    )}>
+      <span className={cn(
+        'w-1.5 h-1.5 rounded-full',
+        variant === 'success' && 'bg-emerald-500',
+        variant === 'warning' && 'bg-amber-500',
+        variant === 'error' && 'bg-red-500',
+        variant === 'info' && 'bg-blue-500',
+        variant === 'default' && 'bg-slate-400',
+      )} />
       {children}
     </span>
   );
@@ -130,11 +151,11 @@ export const Input: React.FC<InputProps> = ({
   error,
 }) => {
   return (
-    <div className={cn('space-y-2', className)}>
+    <div className={cn('space-y-1.5', className)}>
       {label && (
-        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">
+        <label className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.15em] ml-0.5 flex items-center gap-1">
           {label}
-          {required && <span className="text-red-400 ml-1">*</span>}
+          {required && <span className="text-gold text-xs">*</span>}
         </label>
       )}
       <input
@@ -145,12 +166,16 @@ export const Input: React.FC<InputProps> = ({
         value={value}
         onChange={onChange}
         className={cn(
-          'w-full p-3 bg-slate-50 border-2 rounded-xl outline-none transition-all font-medium text-navy text-sm',
-          error ? 'border-red-300 focus:border-red-500' : 'border-slate-100 focus:border-gold',
-          disabled && 'opacity-50 cursor-not-allowed'
+          'w-full px-4 py-3 bg-slate-50/80 border-2 rounded-xl outline-none transition-all duration-300 font-medium text-navy text-sm',
+          'placeholder:text-slate-300 placeholder:font-normal',
+          'hover:bg-white hover:border-slate-200',
+          error
+            ? 'border-red-300 focus:border-red-500 focus:ring-2 focus:ring-red-100'
+            : 'border-slate-100 focus:border-gold focus:ring-2 focus:ring-gold/10 focus:bg-white',
+          disabled && 'opacity-40 cursor-not-allowed bg-slate-100'
         )}
       />
-      {error && <p className="text-red-500 text-[10px] font-bold ml-1">{error}</p>}
+      {error && <p className="text-red-500 text-[10px] font-semibold ml-0.5">{error}</p>}
     </div>
   );
 };
@@ -176,11 +201,11 @@ export const Select: React.FC<SelectProps> = ({
   className,
 }) => {
   return (
-    <div className={cn('space-y-2', className)}>
+    <div className={cn('space-y-1.5', className)}>
       {label && (
-        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">
+        <label className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.15em] ml-0.5 flex items-center gap-1">
           {label}
-          {required && <span className="text-red-400 ml-1">*</span>}
+          {required && <span className="text-gold text-xs">*</span>}
         </label>
       )}
       <select
@@ -188,7 +213,12 @@ export const Select: React.FC<SelectProps> = ({
         onChange={onChange}
         required={required}
         disabled={disabled}
-        className="w-full p-3 bg-slate-50 border-2 border-slate-100 rounded-xl outline-none focus:border-gold transition-all font-medium text-navy text-sm"
+        className={cn(
+          'w-full px-4 py-3 bg-slate-50/80 border-2 border-slate-100 rounded-xl outline-none transition-all duration-300 font-medium text-navy text-sm appearance-none',
+          'hover:bg-white hover:border-slate-200',
+          'focus:border-gold focus:ring-2 focus:ring-gold/10 focus:bg-white',
+          disabled && 'opacity-40 cursor-not-allowed'
+        )}
       >
         {options.map(opt => (
           <option key={opt.value} value={opt.value}>
@@ -221,11 +251,11 @@ export const Textarea: React.FC<TextareaProps> = ({
   className,
 }) => {
   return (
-    <div className={cn('space-y-2', className)}>
+    <div className={cn('space-y-1.5', className)}>
       {label && (
-        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">
+        <label className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.15em] ml-0.5 flex items-center gap-1">
           {label}
-          {required && <span className="text-red-400 ml-1">*</span>}
+          {required && <span className="text-gold text-xs">*</span>}
         </label>
       )}
       <textarea
@@ -234,7 +264,12 @@ export const Textarea: React.FC<TextareaProps> = ({
         onChange={onChange}
         required={required}
         rows={rows}
-        className="w-full p-3 bg-slate-50 border-2 border-slate-100 rounded-xl outline-none focus:border-gold transition-all font-medium text-navy text-sm resize-none"
+        className={cn(
+          'w-full px-4 py-3 bg-slate-50/80 border-2 border-slate-100 rounded-xl outline-none transition-all duration-300 font-medium text-navy text-sm resize-none',
+          'placeholder:text-slate-300 placeholder:font-normal',
+          'hover:bg-white hover:border-slate-200',
+          'focus:border-gold focus:ring-2 focus:ring-gold/10 focus:bg-white'
+        )}
       />
     </div>
   );

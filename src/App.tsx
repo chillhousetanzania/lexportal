@@ -2,7 +2,7 @@ import React from 'react';
 import { useApp } from './context/AppContext';
 import { LoginPage, AuthenticationGuard } from './components/auth';
 import { MainLayout } from './components/layout';
-import { Dashboard } from './components/dashboard/Dashboard';
+import { EnhancedDashboard } from './components/dashboard/EnhancedDashboard';
 import { UserManagement } from './components/users/UserManagement';
 import { CaseManagement } from './components/cases/CaseManagement';
 import { ECaseTracker } from './components/cases/ECaseTracker';
@@ -16,7 +16,7 @@ const PageRouter: React.FC = () => {
 
   switch (currentPage) {
     case 'dashboard':
-      return <Dashboard />;
+      return <EnhancedDashboard />;
     case 'users':
       return <UserManagement />;
     case 'cases':
@@ -31,7 +31,7 @@ const PageRouter: React.FC = () => {
     case 'resources':
       return <SharedReports />;
     default:
-      return <Dashboard />;
+      return <EnhancedDashboard />;
   }
 };
 

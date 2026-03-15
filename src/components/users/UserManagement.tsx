@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { RoleGuard } from '../auth/RoleGuard';
-import { Card, Button, Badge, Input, Select } from '../ui';
+import { Card, Button, Badge, Input, Select, cn } from '../ui';
 import { PageHeader, AccessDenied, EmptyState } from '../shared/PageElements';
 import { ErrorBoundary } from '../shared/ErrorBoundary';
 import type { UserProfile, UserRole, UserStatus } from '../../types';
-import { UserPlus, Edit2, UserX, Search } from 'lucide-react';
+import { UserPlus, Edit2, UserX, Search, Users } from 'lucide-react';
 
 const statusBadgeVariant = (status: UserStatus) => {
   const map: Record<UserStatus, 'success' | 'error' | 'warning'> = {
@@ -24,6 +24,13 @@ const roleBadgeVariant = (role: UserRole) => {
     advisory: 'default',
   };
   return map[role];
+};
+
+const roleColors: Record<UserRole, string> = {
+  admin: 'from-red-400 to-red-500',
+  accountant: 'from-emerald-400 to-emerald-500',
+  litigator: 'from-blue-400 to-blue-500',
+  advisory: 'from-purple-400 to-purple-500',
 };
 
 const UserForm: React.FC<{
@@ -46,56 +53,24 @@ const UserForm: React.FC<{
   };
 
   return (
-    <Card className="p-6">
+    <Card className="p-8 animate-scale-in">
       <h3 className="text-sm font-black text-navy uppercase tracking-tight mb-6">
         {mode === 'create' ? 'Create New User' : 'Edit User'}
       </h3>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Input
-            label="Full Name"
-            required
-            placeholder="John Doe"
-            value={form.name}
-            onChange={e => setForm({ ...form, name: e.target.value })}
-          />
-          <Input
-            label="Username"
-            required
-            placeholder="johndoe"
-            value={form.username}
-            onChange={e => setForm({ ...form, username: e.target.value })}
-          />
-          <Input
-            label="Email"
-            type="email"
-            required
-            placeholder="john@lex.com"
-            value={form.email}
-            onChange={e => setForm({ ...form, email: e.target.value })}
-          />
+      <form onSubmit={handleSubmit} className="space-y-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <Input label="Full Name" required placeholder="John Doe" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} />
+          <Input label="Username" required placeholder="johndoe" value={form.username} onChange={e => setForm({ ...form, username: e.target.value })} />
+          <Input label="Email" type="email" required placeholder="john@justice.gov.tz" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} />
           {mode === 'create' && (
-            <Input
-              label="Password"
-              type="password"
-              required
-              placeholder="Min 6 characters"
-              value={form.password}
-              onChange={e => setForm({ ...form, password: e.target.value })}
-            />
+            <Input label="Password" type="password" required placeholder="Min 6 characters" value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} />
           )}
-          <Select
-            label="Role"
-            required
-            value={form.role}
-            onChange={e => setForm({ ...form, role: e.target.value as UserRole })}
-            options={[
-              { value: 'admin', label: 'Admin' },
-              { value: 'accountant', label: 'Accountant' },
-              { value: 'litigator', label: 'Litigator' },
-              { value: 'advisory', label: 'Advisory Client' },
-            ]}
-          />
+          <Select label="Role" required value={form.role} onChange={e => setForm({ ...form, role: e.target.value as UserRole })} options={[
+            { value: 'admin', label: 'Administrator' },
+            { value: 'accountant', label: 'Accountant' },
+            { value: 'litigator', label: 'Litigator' },
+            { value: 'advisory', label: 'Advisory Client' },
+          ]} />
         </div>
         <div className="flex justify-end gap-3 pt-4">
           <Button variant="ghost" onClick={onCancel}>Cancel</Button>
@@ -183,29 +158,29 @@ const UserManagementContent: React.FC = () => {
 
   return (
     <div className="p-6 lg:p-8">
-      <PageHeader title="User Management" subtitle="Manage all portal users and access">
+      <PageHeader title="User Management" subtitle="Manage all portal users and access" icon={<Users className="w-6 h-6 text-white" />}>
         <Button variant="accent" onClick={() => setShowForm(true)}>
-          <span className="flex items-center gap-2"><UserPlus className="w-4 h-4" /> Add User</span>
+          <UserPlus className="w-4 h-4" /> Add User
         </Button>
       </PageHeader>
 
-      <Card className="mb-6 p-4">
+      <Card className="mb-6 p-4 animate-slide-up">
         <div className="flex items-center gap-3">
-          <Search className="w-4 h-4 text-slate-400" />
+          <Search className="w-4 h-4 text-slate-300" />
           <input
             type="text"
             placeholder="Search users by name, email, or role..."
-            className="flex-1 text-sm outline-none text-navy"
+            className="flex-1 text-sm outline-none text-navy bg-transparent placeholder:text-slate-300"
             value={search}
             onChange={e => setSearch(e.target.value)}
           />
         </div>
       </Card>
 
-      <Card className="overflow-hidden">
+      <Card className="overflow-hidden animate-slide-up delay-1">
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm">
-            <thead className="bg-navy text-white text-[10px] uppercase font-bold tracking-widest">
+          <table className="w-full text-left text-sm table-premium">
+            <thead>
               <tr>
                 <th className="px-6 py-4">User</th>
                 <th className="px-6 py-4">Role</th>
@@ -214,17 +189,20 @@ const UserManagementContent: React.FC = () => {
                 <th className="px-6 py-4 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-slate-100/60">
               {filteredUsers.map(user => (
-                <tr key={user.id} className="hover:bg-slate-50 transition-colors">
+                <tr key={user.id} className="hover:bg-slate-50/50 transition-all duration-200 group">
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
-                      <div className="h-8 w-8 bg-navy text-gold rounded-full flex items-center justify-center text-xs font-bold shrink-0">
+                      <div className={cn(
+                        'h-9 w-9 rounded-xl bg-gradient-to-br flex items-center justify-center text-xs font-extrabold text-white shrink-0 shadow-sm',
+                        roleColors[user.role]
+                      )}>
                         {user.name[0]}
                       </div>
                       <div>
-                        <p className="font-bold text-navy text-sm">{user.name}</p>
-                        <p className="text-slate-400 text-[10px]">{user.email}</p>
+                        <p className="font-semibold text-navy text-sm">{user.name}</p>
+                        <p className="text-slate-400 text-[10px] font-medium">{user.email}</p>
                       </div>
                     </div>
                   </td>
@@ -234,21 +212,21 @@ const UserManagementContent: React.FC = () => {
                   <td className="px-6 py-4">
                     <Badge variant={statusBadgeVariant(user.status)} size="sm">{user.status}</Badge>
                   </td>
-                  <td className="px-6 py-4 text-slate-500 text-xs">
+                  <td className="px-6 py-4 text-slate-400 text-xs font-medium">
                     {user.createdAt.toLocaleDateString()}
                   </td>
                   <td className="px-6 py-4 text-right">
-                    <div className="flex items-center justify-end gap-2">
+                    <div className="flex items-center justify-end gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                       <button
                         onClick={() => setEditingUser(user)}
-                        className="p-1.5 rounded-lg hover:bg-blue-50 text-slate-400 hover:text-blue-600 transition-colors"
+                        className="p-2 rounded-xl hover:bg-blue-50 text-slate-400 hover:text-blue-600 transition-all duration-200"
                         title="Edit user"
                       >
                         <Edit2 className="w-4 h-4" />
                       </button>
                       <button
                         onClick={() => handleDeactivateUser(user)}
-                        className="p-1.5 rounded-lg hover:bg-red-50 text-slate-400 hover:text-red-600 transition-colors"
+                        className="p-2 rounded-xl hover:bg-red-50 text-slate-400 hover:text-red-500 transition-all duration-200"
                         title={user.status === 'active' ? 'Deactivate' : 'Activate'}
                       >
                         <UserX className="w-4 h-4" />

@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { RoleGuard } from '../auth/RoleGuard';
-import { Card } from '../ui';
+import { Card, cn } from '../ui';
 import { PageHeader, AccessDenied } from '../shared/PageElements';
 import { ErrorBoundary } from '../shared/ErrorBoundary';
 import type { FinancialRecord, FinancialMetrics, CategoryBreakdown } from '../../types';
@@ -9,9 +9,9 @@ import {
   LineChart, Line, BarChart, Bar, PieChart, Pie, Cell,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
 } from 'recharts';
-import { DollarSign, TrendingUp, TrendingDown, Activity } from 'lucide-react';
+import { DollarSign, TrendingUp, TrendingDown, Activity, BarChart3 } from 'lucide-react';
 
-const COLORS = ['#d4af37', '#1c1c1c', '#6366f1', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4'];
+const COLORS = ['#d4af37', '#0f172a', '#6366f1', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4'];
 
 const calculateMetrics = (records: FinancialRecord[]): FinancialMetrics => {
   const revenue = records.filter(r => r.type === 'revenue').reduce((s, r) => s + r.amount, 0);
@@ -92,17 +92,18 @@ const FinancialAnalyticsContent: React.FC = () => {
 
   return (
     <div className="p-6 lg:p-8">
-      <PageHeader title="Financial Analytics" subtitle="Revenue trends, expense analysis, and key metrics">
-        <div className="flex gap-2">
+      <PageHeader title="Financial Analytics" subtitle="Revenue trends, expense analysis, and key metrics" icon={<BarChart3 className="w-6 h-6 text-white" />}>
+        <div className="flex gap-1.5 bg-slate-100/80 rounded-xl p-1">
           {(['all', 'year', 'quarter'] as const).map(preset => (
             <button
               key={preset}
               onClick={() => setTimePreset(preset)}
-              className={`px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all ${
+              className={cn(
+                'px-4 py-2 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all duration-300',
                 timePreset === preset
-                  ? 'bg-navy text-gold'
-                  : 'bg-slate-100 text-slate-400 hover:text-navy'
-              }`}
+                  ? 'gradient-navy text-gold shadow-navy'
+                  : 'text-slate-400 hover:text-navy hover:bg-white'
+              )}
             >
               {preset === 'all' ? 'All Time' : preset === 'year' ? 'Last Year' : 'Last Quarter'}
             </button>
@@ -111,50 +112,50 @@ const FinancialAnalyticsContent: React.FC = () => {
       </PageHeader>
 
       {/* Metrics Row */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <Card className="p-5">
-          <div className="flex items-center gap-3">
-            <div className="h-10 w-10 bg-emerald-100 rounded-xl flex items-center justify-center">
-              <TrendingUp className="w-5 h-5 text-emerald-600" />
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8 animate-slide-up">
+        <Card className="p-5 group hover:translate-y-[-2px]">
+          <div className="flex items-center gap-4">
+            <div className="p-3 bg-emerald-50 rounded-2xl group-hover:scale-110 transition-transform">
+              <TrendingUp className="w-6 h-6 text-emerald-500" />
             </div>
             <div>
-              <p className="text-[10px] font-bold text-slate-400 uppercase">Revenue</p>
-              <p className="text-lg font-black text-navy">${metrics.totalRevenue.toLocaleString()}</p>
+              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Revenue</p>
+              <p className="text-xl font-black text-navy">${metrics.totalRevenue.toLocaleString()}</p>
             </div>
           </div>
         </Card>
-        <Card className="p-5">
-          <div className="flex items-center gap-3">
-            <div className="h-10 w-10 bg-red-100 rounded-xl flex items-center justify-center">
-              <TrendingDown className="w-5 h-5 text-red-600" />
+        <Card className="p-5 group hover:translate-y-[-2px]">
+          <div className="flex items-center gap-4">
+            <div className="p-3 bg-red-50 rounded-2xl group-hover:scale-110 transition-transform">
+              <TrendingDown className="w-6 h-6 text-red-500" />
             </div>
             <div>
-              <p className="text-[10px] font-bold text-slate-400 uppercase">Expenses</p>
-              <p className="text-lg font-black text-navy">${metrics.totalExpenses.toLocaleString()}</p>
+              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Expenses</p>
+              <p className="text-xl font-black text-navy">${metrics.totalExpenses.toLocaleString()}</p>
             </div>
           </div>
         </Card>
-        <Card className="p-5">
-          <div className="flex items-center gap-3">
-            <div className="h-10 w-10 bg-gold/20 rounded-xl flex items-center justify-center">
-              <DollarSign className="w-5 h-5 text-gold" />
+        <Card className="p-5 group hover:translate-y-[-2px]">
+          <div className="flex items-center gap-4">
+            <div className="p-3 bg-gold/10 rounded-2xl group-hover:scale-110 transition-transform">
+              <DollarSign className="w-6 h-6 text-gold" />
             </div>
             <div>
-              <p className="text-[10px] font-bold text-slate-400 uppercase">Net Income</p>
-              <p className={`text-lg font-black ${metrics.netIncome >= 0 ? 'text-emerald-600' : 'text-red-500'}`}>
+              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Net Income</p>
+              <p className={cn('text-xl font-black', metrics.netIncome >= 0 ? 'text-emerald-600' : 'text-red-500')}>
                 ${metrics.netIncome.toLocaleString()}
               </p>
             </div>
           </div>
         </Card>
-        <Card className="p-5">
-          <div className="flex items-center gap-3">
-            <div className="h-10 w-10 bg-blue-100 rounded-xl flex items-center justify-center">
-              <Activity className="w-5 h-5 text-blue-600" />
+        <Card className="p-5 group hover:translate-y-[-2px]">
+          <div className="flex items-center gap-4">
+            <div className="p-3 bg-blue-50 rounded-2xl group-hover:scale-110 transition-transform">
+              <Activity className="w-6 h-6 text-blue-500" />
             </div>
             <div>
-              <p className="text-[10px] font-bold text-slate-400 uppercase">Margin</p>
-              <p className="text-lg font-black text-navy">
+              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Margin</p>
+              <p className="text-xl font-black text-navy">
                 {metrics.totalRevenue > 0 ? ((metrics.netIncome / metrics.totalRevenue) * 100).toFixed(1) : '0'}%
               </p>
             </div>
@@ -163,25 +164,25 @@ const FinancialAnalyticsContent: React.FC = () => {
       </div>
 
       {/* Revenue Trend Line Chart */}
-      <Card className="p-6 mb-6">
+      <Card className="p-6 mb-6 animate-slide-up delay-1">
         <h3 className="text-sm font-black text-navy uppercase tracking-tight mb-6">Revenue & Expense Trend</h3>
         <ResponsiveContainer width="100%" height={300}>
           <LineChart data={revenueData}>
             <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-            <XAxis dataKey="period" tick={{ fontSize: 11 }} stroke="#94a3b8" />
-            <YAxis tick={{ fontSize: 11 }} stroke="#94a3b8" />
+            <XAxis dataKey="period" tick={{ fontSize: 11 }} stroke="#cbd5e1" />
+            <YAxis tick={{ fontSize: 11 }} stroke="#cbd5e1" />
             <Tooltip
-              contentStyle={{ borderRadius: '12px', border: '1px solid #e2e8f0', fontSize: '12px' }}
+              contentStyle={{ borderRadius: '16px', border: '1px solid #e2e8f0', fontSize: '12px', boxShadow: '0 4px 14px rgba(0,0,0,0.06)' }}
               formatter={(value) => [`$${Number(value).toLocaleString()}`]}
             />
             <Legend wrapperStyle={{ fontSize: '11px' }} />
-            <Line type="monotone" dataKey="revenue" stroke="#d4af37" strokeWidth={2} dot={{ fill: '#d4af37' }} />
-            <Line type="monotone" dataKey="expenses" stroke="#ef4444" strokeWidth={2} dot={{ fill: '#ef4444' }} />
+            <Line type="monotone" dataKey="revenue" stroke="#d4af37" strokeWidth={2.5} dot={{ fill: '#d4af37', r: 4 }} activeDot={{ r: 6, strokeWidth: 2 }} />
+            <Line type="monotone" dataKey="expenses" stroke="#ef4444" strokeWidth={2.5} dot={{ fill: '#ef4444', r: 4 }} activeDot={{ r: 6, strokeWidth: 2 }} />
           </LineChart>
         </ResponsiveContainer>
       </Card>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 animate-slide-up delay-2">
         {/* Expense Breakdown Pie Chart */}
         <Card className="p-6">
           <h3 className="text-sm font-black text-navy uppercase tracking-tight mb-6">Expense Breakdown</h3>
@@ -195,6 +196,7 @@ const FinancialAnalyticsContent: React.FC = () => {
                   cx="50%"
                   cy="50%"
                   outerRadius={100}
+                  innerRadius={60}
                   label={({ name, percent }: { name?: string; percent?: number }) => `${name || ''} (${((percent ?? 0) * 100).toFixed(0)}%)`}
                   labelLine={false}
                 >
@@ -202,11 +204,14 @@ const FinancialAnalyticsContent: React.FC = () => {
                     <Cell key={index} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
-                <Tooltip formatter={(value) => [`$${Number(value).toLocaleString()}`]} />
+                <Tooltip
+                  contentStyle={{ borderRadius: '16px', border: '1px solid #e2e8f0', boxShadow: '0 4px 14px rgba(0,0,0,0.06)' }}
+                  formatter={(value) => [`$${Number(value).toLocaleString()}`]}
+                />
               </PieChart>
             </ResponsiveContainer>
           ) : (
-            <div className="flex items-center justify-center h-[300px] text-slate-400 text-sm">No expense data</div>
+            <div className="flex items-center justify-center h-[300px] text-slate-300 text-sm font-medium">No expense data</div>
           )}
         </Card>
 
@@ -217,17 +222,17 @@ const FinancialAnalyticsContent: React.FC = () => {
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={categoryBarData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-                <XAxis dataKey="category" tick={{ fontSize: 10 }} stroke="#94a3b8" angle={-20} textAnchor="end" height={60} />
-                <YAxis tick={{ fontSize: 11 }} stroke="#94a3b8" />
+                <XAxis dataKey="category" tick={{ fontSize: 10 }} stroke="#cbd5e1" angle={-20} textAnchor="end" height={60} />
+                <YAxis tick={{ fontSize: 11 }} stroke="#cbd5e1" />
                 <Tooltip
-                  contentStyle={{ borderRadius: '12px', border: '1px solid #e2e8f0', fontSize: '12px' }}
+                  contentStyle={{ borderRadius: '16px', border: '1px solid #e2e8f0', fontSize: '12px', boxShadow: '0 4px 14px rgba(0,0,0,0.06)' }}
                   formatter={(value) => [`$${Number(value).toLocaleString()}`]}
                 />
-                <Bar dataKey="amount" fill="#1c1c1c" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="amount" fill="#0f172a" radius={[8, 8, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           ) : (
-            <div className="flex items-center justify-center h-[300px] text-slate-400 text-sm">No expense data</div>
+            <div className="flex items-center justify-center h-[300px] text-slate-300 text-sm font-medium">No expense data</div>
           )}
         </Card>
       </div>

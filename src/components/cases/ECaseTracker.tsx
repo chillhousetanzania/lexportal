@@ -1,11 +1,11 @@
 import React, { useState, useMemo } from 'react';
 import { useApp } from '../../context/AppContext';
 import { RoleGuard } from '../auth/RoleGuard';
-import { Card, Badge } from '../ui';
+import { Card, Badge, cn } from '../ui';
 import { PageHeader, AccessDenied, EmptyState } from '../shared/PageElements';
 import { ErrorBoundary } from '../shared/ErrorBoundary';
 import type { CaseRecord, CaseStatus } from '../../types';
-import { Calendar, Clock, FileText, Search } from 'lucide-react';
+import { Calendar, Clock, FileText, Search, Briefcase } from 'lucide-react';
 
 const statusVariant = (status: CaseStatus): 'info' | 'success' | 'warning' | 'error' | 'default' => {
   const map: Record<CaseStatus, 'info' | 'success' | 'warning' | 'error' | 'default'> = {
@@ -21,20 +21,23 @@ const statusVariant = (status: CaseStatus): 'info' | 'success' | 'warning' | 'er
 const CaseCard: React.FC<{ caseRecord: CaseRecord; onSelect: () => void; isSelected: boolean }> = ({ caseRecord, onSelect, isSelected }) => {
   return (
     <Card
-      className={`p-5 cursor-pointer transition-all hover:shadow-md ${isSelected ? 'ring-2 ring-gold' : ''}`}
+      className={cn(
+        'p-5 cursor-pointer transition-all duration-300 hover:translate-y-[-2px] group',
+        isSelected ? 'ring-2 ring-gold shadow-gold' : ''
+      )}
       onClick={onSelect}
     >
       <div className="flex items-start justify-between mb-3">
         <span className="font-mono text-[10px] font-bold text-gold">{caseRecord.caseNumber}</span>
         <Badge variant={statusVariant(caseRecord.status)} size="sm">{caseRecord.status}</Badge>
       </div>
-      <h3 className="font-bold text-navy text-sm mb-2">{caseRecord.title}</h3>
-      <p className="text-slate-500 text-xs line-clamp-2 mb-3">{caseRecord.description}</p>
-      <div className="flex items-center gap-4 text-[10px] text-slate-400">
-        <span className="flex items-center gap-1">
+      <h3 className="font-bold text-navy text-sm mb-2 group-hover:text-gold transition-colors">{caseRecord.title}</h3>
+      <p className="text-slate-400 text-xs line-clamp-2 mb-3">{caseRecord.description}</p>
+      <div className="flex items-center gap-4 text-[10px] text-slate-400 font-medium">
+        <span className="flex items-center gap-1.5">
           <Calendar className="w-3 h-3" /> {caseRecord.filedDate.toLocaleDateString()}
         </span>
-        <span className="flex items-center gap-1">
+        <span className="flex items-center gap-1.5">
           <Clock className="w-3 h-3" /> {caseRecord.updates.length} updates
         </span>
       </div>
@@ -47,22 +50,25 @@ const CaseDetailPanel: React.FC<{ caseRecord: CaseRecord }> = ({ caseRecord }) =
   const litigator = users.find(u => u.id === caseRecord.assignedLitigator);
 
   return (
-    <div className="space-y-6">
-      <div className="bg-navy text-white p-5 rounded-xl">
-        <p className="text-gold text-[10px] font-bold uppercase tracking-widest mb-1">{caseRecord.caseNumber}</p>
-        <h2 className="text-lg font-black mb-2">{caseRecord.title}</h2>
-        <Badge variant={statusVariant(caseRecord.status)} size="md">{caseRecord.status}</Badge>
+    <div className="space-y-4 animate-fade-in">
+      <div className="gradient-navy rounded-3xl p-5 text-white relative overflow-hidden">
+        <div className="absolute inset-0 bg-grid-pattern opacity-30" />
+        <div className="relative z-10">
+          <p className="text-gold text-[10px] font-bold uppercase tracking-[0.2em] mb-1">{caseRecord.caseNumber}</p>
+          <h2 className="text-lg font-black mb-2 tracking-tight">{caseRecord.title}</h2>
+          <Badge variant={statusVariant(caseRecord.status)} size="md">{caseRecord.status}</Badge>
+        </div>
       </div>
 
       <Card className="p-5">
-        <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">Case Details</h4>
+        <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.15em] mb-3">Case Details</h4>
         <p className="text-slate-600 text-sm leading-relaxed mb-4">{caseRecord.description}</p>
         <div className="grid grid-cols-2 gap-3 text-xs">
-          <div className="bg-slate-50 p-3 rounded-lg">
+          <div className="bg-slate-50/80 p-3.5 rounded-xl">
             <p className="text-slate-400 text-[10px] font-bold uppercase mb-1">Litigator</p>
             <p className="font-bold text-navy">{litigator?.name || 'N/A'}</p>
           </div>
-          <div className="bg-slate-50 p-3 rounded-lg">
+          <div className="bg-slate-50/80 p-3.5 rounded-xl">
             <p className="text-slate-400 text-[10px] font-bold uppercase mb-1">Filed</p>
             <p className="font-bold text-navy">{caseRecord.filedDate.toLocaleDateString()}</p>
           </div>
@@ -71,11 +77,13 @@ const CaseDetailPanel: React.FC<{ caseRecord: CaseRecord }> = ({ caseRecord }) =
 
       {caseRecord.keyDates.length > 0 && (
         <Card className="p-5">
-          <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">Key Dates</h4>
+          <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.15em] mb-3">Key Dates</h4>
           <div className="space-y-2">
             {caseRecord.keyDates.map((kd, i) => (
-              <div key={i} className="flex items-center gap-3 p-2.5 bg-slate-50 rounded-lg">
-                <Calendar className="w-4 h-4 text-gold shrink-0" />
+              <div key={i} className="flex items-center gap-3 p-3 bg-slate-50/80 rounded-xl">
+                <div className="w-8 h-8 bg-gold/10 rounded-lg flex items-center justify-center">
+                  <Calendar className="w-4 h-4 text-gold shrink-0" />
+                </div>
                 <div>
                   <p className="font-bold text-navy text-xs">{kd.label}</p>
                   <p className="text-slate-400 text-[10px]">{new Date(kd.date).toLocaleDateString()}</p>
@@ -87,10 +95,10 @@ const CaseDetailPanel: React.FC<{ caseRecord: CaseRecord }> = ({ caseRecord }) =
       )}
 
       <Card className="p-5">
-        <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">Recent Updates</h4>
+        <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.15em] mb-3">Recent Updates</h4>
         <div className="space-y-3">
           {caseRecord.updates.slice(0, 5).map(update => (
-            <div key={update.id} className="border-l-2 border-gold pl-3 py-1.5">
+            <div key={update.id} className="border-l-[3px] border-gold pl-3 py-1.5">
               <div className="flex items-center gap-2 mb-0.5">
                 <p className="font-bold text-navy text-xs">{update.author}</p>
                 <p className="text-slate-400 text-[10px]">{new Date(update.timestamp).toLocaleDateString()}</p>
@@ -129,15 +137,15 @@ const ECaseTrackerContent: React.FC = () => {
 
   return (
     <div className="p-6 lg:p-8">
-      <PageHeader title="My Cases" subtitle={`${myCases.length} cases assigned to you`} />
+      <PageHeader title="My Cases" subtitle={`${myCases.length} cases assigned to you`} icon={<Briefcase className="w-6 h-6 text-white" />} />
 
-      <Card className="mb-6 p-3">
+      <Card className="mb-6 p-3.5 animate-slide-up">
         <div className="flex items-center gap-3">
-          <Search className="w-4 h-4 text-slate-400" />
+          <Search className="w-4 h-4 text-slate-300" />
           <input
             type="text"
             placeholder="Search your cases..."
-            className="flex-1 text-sm outline-none text-navy"
+            className="flex-1 text-sm outline-none text-navy bg-transparent placeholder:text-slate-300"
             value={search}
             onChange={e => setSearch(e.target.value)}
           />
@@ -145,7 +153,7 @@ const ECaseTrackerContent: React.FC = () => {
       </Card>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="space-y-4">
+        <div className="space-y-4 animate-slide-up delay-1">
           {filtered.map(c => (
             <CaseCard
               key={c.id}
@@ -168,9 +176,11 @@ const ECaseTrackerContent: React.FC = () => {
             <CaseDetailPanel caseRecord={selectedCase} />
           ) : (
             <div className="flex items-center justify-center h-full text-center p-8">
-              <div>
-                <FileText className="w-12 h-12 text-slate-300 mx-auto mb-4" />
-                <p className="text-slate-400 text-sm">Select a case to view details</p>
+              <div className="animate-fade-in">
+                <div className="w-16 h-16 bg-slate-50 rounded-3xl flex items-center justify-center mx-auto mb-4">
+                  <FileText className="w-8 h-8 text-slate-300" />
+                </div>
+                <p className="text-slate-400 text-sm font-medium">Select a case to view details</p>
               </div>
             </div>
           )}
@@ -182,7 +192,7 @@ const ECaseTrackerContent: React.FC = () => {
         <div className="lg:hidden mt-6">
           <button
             onClick={() => setSelectedCase(null)}
-            className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4 hover:text-navy"
+            className="text-xs font-bold text-slate-400 uppercase tracking-[0.15em] mb-4 hover:text-gold transition-colors"
           >
             &larr; Back to list
           </button>

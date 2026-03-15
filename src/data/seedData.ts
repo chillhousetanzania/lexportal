@@ -4,7 +4,7 @@ export const seedUsers: UserProfile[] = [
   {
     id: 'u1',
     username: 'admin',
-    email: 'admin@lex.com',
+    email: 'admin@justice.gov.tz',
     name: 'Sarah Admin',
     role: 'admin',
     status: 'active',
@@ -17,7 +17,7 @@ export const seedUsers: UserProfile[] = [
   {
     id: 'u2',
     username: 'accountant',
-    email: 'accountant@lex.com',
+    email: 'accountant@justice.gov.tz',
     name: 'James Carter',
     role: 'accountant',
     status: 'active',
@@ -30,7 +30,7 @@ export const seedUsers: UserProfile[] = [
   {
     id: 'u3',
     username: 'litigator',
-    email: 'litigator@lex.com',
+    email: 'litigator@justice.gov.tz',
     name: 'Linda Osei',
     role: 'litigator',
     status: 'active',
@@ -43,7 +43,7 @@ export const seedUsers: UserProfile[] = [
   {
     id: 'u4',
     username: 'client',
-    email: 'client@lex.com',
+    email: 'counsel@justice.gov.tz',
     name: 'Michael Tetteh',
     role: 'advisory',
     status: 'active',

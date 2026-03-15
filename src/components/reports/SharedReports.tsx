@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { useApp } from '../../context/AppContext';
-import { Card, Badge } from '../ui';
+import { Card, Badge, cn } from '../ui';
 import { PageHeader, EmptyState } from '../shared/PageElements';
 import { ErrorBoundary } from '../shared/ErrorBoundary';
 import { filterSharedResourcesByRole } from '../../utils/rbac';
@@ -48,48 +48,55 @@ const SharedReportsContent: React.FC = () => {
   if (selectedResource) {
     const creator = users.find(u => u.id === selectedResource.createdBy);
     return (
-      <div className="p-6 lg:p-8">
+      <div className="p-6 lg:p-8 animate-fade-in">
         <button
           onClick={() => setSelectedResource(null)}
-          className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-6 hover:text-navy transition-colors"
+          className="text-xs font-bold text-slate-400 uppercase tracking-[0.15em] mb-6 hover:text-gold transition-colors inline-flex items-center gap-2"
         >
           &larr; Back to Reports
         </button>
 
-        <div className="bg-navy text-white p-6 rounded-xl mb-6">
-          <div className="flex items-start justify-between">
+        <div className="gradient-navy rounded-3xl p-6 sm:p-8 mb-6 text-white relative overflow-hidden">
+          <div className="absolute inset-0 bg-grid-pattern opacity-30" />
+          <div className="relative z-10 flex items-start justify-between">
             <div>
               <Badge variant={typeVariant[selectedResource.type]} size="sm">{selectedResource.type}</Badge>
-              <h2 className="text-xl font-black mt-3">{selectedResource.title}</h2>
+              <h2 className="text-2xl font-black mt-3 tracking-tight">{selectedResource.title}</h2>
             </div>
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-          <Card className="p-4">
+          <Card className="p-5">
             <div className="flex items-center gap-3">
-              <User className="w-4 h-4 text-slate-400" />
+              <div className="w-9 h-9 bg-slate-50 rounded-xl flex items-center justify-center">
+                <User className="w-4 h-4 text-slate-400" />
+              </div>
               <div>
-                <p className="text-[10px] font-bold text-slate-400 uppercase">Created By</p>
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Created By</p>
                 <p className="text-sm font-bold text-navy">{creator?.name || 'Unknown'}</p>
               </div>
             </div>
           </Card>
-          <Card className="p-4">
+          <Card className="p-5">
             <div className="flex items-center gap-3">
-              <Calendar className="w-4 h-4 text-slate-400" />
+              <div className="w-9 h-9 bg-slate-50 rounded-xl flex items-center justify-center">
+                <Calendar className="w-4 h-4 text-slate-400" />
+              </div>
               <div>
-                <p className="text-[10px] font-bold text-slate-400 uppercase">Created</p>
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Created</p>
                 <p className="text-sm font-bold text-navy">{selectedResource.createdAt.toLocaleDateString()}</p>
               </div>
             </div>
           </Card>
-          <Card className="p-4">
+          <Card className="p-5">
             <div className="flex items-center gap-3">
-              <FileText className="w-4 h-4 text-slate-400" />
+              <div className="w-9 h-9 bg-slate-50 rounded-xl flex items-center justify-center">
+                <FileText className="w-4 h-4 text-slate-400" />
+              </div>
               <div>
-                <p className="text-[10px] font-bold text-slate-400 uppercase">Shared With</p>
-                <p className="text-sm font-bold text-navy">{selectedResource.sharedWith.join(', ')}</p>
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Shared With</p>
+                <p className="text-sm font-bold text-navy capitalize">{selectedResource.sharedWith.join(', ')}</p>
               </div>
             </div>
           </Card>
@@ -108,22 +115,23 @@ const SharedReportsContent: React.FC = () => {
       <PageHeader
         title={role === 'advisory' ? 'Shared Resources' : 'Shared Reports'}
         subtitle={`${filtered.length} ${role === 'advisory' ? 'resources' : 'reports'} available`}
+        icon={<FileText className="w-6 h-6 text-white" />}
       />
 
-      <div className="flex flex-col sm:flex-row gap-4 mb-6">
-        <Card className="flex-1 p-3">
+      <div className="flex flex-col sm:flex-row gap-4 mb-6 animate-slide-up">
+        <Card className="flex-1 p-3.5">
           <div className="flex items-center gap-3">
-            <Search className="w-4 h-4 text-slate-400" />
+            <Search className="w-4 h-4 text-slate-300" />
             <input
               type="text"
               placeholder="Search reports..."
-              className="flex-1 text-sm outline-none text-navy"
+              className="flex-1 text-sm outline-none text-navy bg-transparent placeholder:text-slate-300"
               value={search}
               onChange={e => setSearch(e.target.value)}
             />
           </div>
         </Card>
-        <Card className="p-3">
+        <Card className="p-3.5">
           <select
             className="text-sm outline-none text-navy bg-transparent font-medium"
             value={typeFilter}
@@ -138,30 +146,31 @@ const SharedReportsContent: React.FC = () => {
         </Card>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {filtered.map(resource => {
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 animate-slide-up delay-1">
+        {filtered.map((resource, index) => {
           const Icon = typeIcon[resource.type];
           const creator = users.find(u => u.id === resource.createdBy);
           return (
             <Card
               key={resource.id}
-              className="p-5 cursor-pointer hover:shadow-md transition-all group"
+              className="p-5 cursor-pointer group hover:translate-y-[-2px]"
               onClick={() => setSelectedResource(resource)}
             >
               <div className="flex items-start gap-4">
-                <div className="h-10 w-10 bg-slate-100 rounded-xl flex items-center justify-center shrink-0 group-hover:bg-gold/10 transition-colors">
-                  <Icon className="w-5 h-5 text-slate-400 group-hover:text-gold transition-colors" />
+                <div className="h-11 w-11 bg-slate-50 rounded-2xl flex items-center justify-center shrink-0 group-hover:bg-gold/10 transition-colors duration-300">
+                  <Icon className="w-5 h-5 text-slate-400 group-hover:text-gold transition-colors duration-300" />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2 mb-1">
+                  <div className="flex items-center gap-2 mb-1.5">
                     <Badge variant={typeVariant[resource.type]} size="sm">{resource.type}</Badge>
                   </div>
-                  <h3 className="font-bold text-navy text-sm mb-1 group-hover:text-gold transition-colors truncate">
+                  <h3 className="font-bold text-navy text-sm mb-1 group-hover:text-gold transition-colors duration-300 truncate">
                     {resource.title}
                   </h3>
-                  <p className="text-slate-500 text-xs line-clamp-2 mb-3">{resource.description}</p>
-                  <div className="flex items-center gap-3 text-[10px] text-slate-400">
+                  <p className="text-slate-400 text-xs line-clamp-2 mb-3">{resource.description}</p>
+                  <div className="flex items-center gap-3 text-[10px] text-slate-400 font-medium">
                     <span>{creator?.name || 'Unknown'}</span>
+                    <span className="w-1 h-1 bg-slate-300 rounded-full" />
                     <span>{resource.createdAt.toLocaleDateString()}</span>
                   </div>
                 </div>

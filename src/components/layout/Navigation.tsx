@@ -4,7 +4,7 @@ import { getNavigationItems } from '../../utils/rbac';
 import { cn } from '../ui';
 import {
   LayoutDashboard, Users, Briefcase, DollarSign, BarChart3, FileText,
-  LogOut, ChevronLeft, ChevronRight, Menu,
+  LogOut, ChevronLeft, ChevronRight, Menu, Shield, X
 } from 'lucide-react';
 
 const iconMap: Record<string, React.FC<{ className?: string }>> = {
@@ -22,79 +22,98 @@ export const Navigation: React.FC = () => {
 
   const NavContent = () => (
     <>
-      {/* Logo */}
-      <div className={cn('h-16 flex items-center gap-3 border-b border-slate-200 bg-white shadow-sm', collapsed ? 'px-3 justify-center' : 'px-6')}>
-        <div className="h-9 w-9 bg-navy rounded-xl flex items-center justify-center text-gold shadow-lg shrink-0">
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
+      {/* Government Logo */}
+      <div className={cn(
+        'h-[72px] flex items-center gap-3 border-b border-white/5 shrink-0',
+        collapsed ? 'px-3 justify-center' : 'px-5'
+      )}>
+        <div className="h-10 w-10 gradient-gold rounded-xl flex items-center justify-center shadow-gold shrink-0">
+          <Shield className="w-5 h-5 text-navy-dark" />
         </div>
         {!collapsed && (
-          <h1 className="text-sm font-black text-navy uppercase tracking-tighter leading-none">
-            LexPortal
-            <br />
-            <span className="text-[9px] text-gold tracking-widest font-bold">ENTERPRISE</span>
-          </h1>
+          <div className="min-w-0 animate-fade-in">
+            <h1 className="text-sm font-black text-white leading-none tracking-tight">
+              Judicial System
+            </h1>
+            <span className="text-[10px] text-slate-400 font-semibold tracking-wider uppercase">Republic of Tanzania</span>
+          </div>
         )}
       </div>
 
       {/* Nav Items */}
-      <nav className="flex-1 py-4 overflow-y-auto no-scrollbar">
-        {navItems.map(item => {
-          const Icon = iconMap[item.icon] || LayoutDashboard;
-          const isActive = currentPage === item.path;
+      <nav className="flex-1 py-4 overflow-y-auto no-scrollbar px-2.5">
+        <div className="space-y-1">
+          {navItems.map((item, index) => {
+            const Icon = iconMap[item.icon] || LayoutDashboard;
+            const isActive = currentPage === item.path;
 
-          return (
-            <button
-              key={item.path}
-              onClick={() => {
-                setCurrentPage(item.path);
-                setMobileOpen(false);
-              }}
-              className={cn(
-                'w-full text-left flex items-center gap-3 transition-all group',
-                collapsed ? 'px-3 py-3 justify-center' : 'px-6 py-3',
-                isActive
-                  ? 'bg-slate-100 border-r-4 border-gold text-gold'
-                  : 'text-slate-600 hover:bg-slate-50 hover:text-navy'
-              )}
-              title={collapsed ? item.label : undefined}
-            >
-              <Icon className={cn('w-5 h-5 shrink-0', isActive ? 'text-gold' : 'text-slate-400 group-hover:text-navy')} />
-              {!collapsed && <span className="text-xs font-semibold">{item.label}</span>}
-            </button>
-          );
-        })}
+            return (
+              <button
+                key={item.path}
+                onClick={() => {
+                  setCurrentPage(item.path);
+                  setMobileOpen(false);
+                }}
+                className={cn(
+                  'w-full text-left flex items-center transition-all duration-300 group relative rounded-xl',
+                  collapsed ? 'px-3 py-3 justify-center' : 'px-4 py-3',
+                  isActive
+                    ? 'bg-white/10 text-gold shadow-sm'
+                    : 'text-slate-400 hover:bg-white/5 hover:text-white'
+                )}
+                style={{ animationDelay: `${index * 0.03}s` }}
+                title={collapsed ? item.label : undefined}
+              >
+                {isActive && (
+                  <div className="absolute left-0 w-[3px] h-6 gradient-gold rounded-r-full shadow-gold transition-all duration-300" />
+                )}
+                <Icon className={cn(
+                  'w-[18px] h-[18px] shrink-0 transition-all duration-300',
+                  isActive ? 'text-gold' : 'text-slate-500 group-hover:text-white'
+                )} />
+                {!collapsed && (
+                  <span className={cn(
+                    'text-[13px] font-medium ml-3 transition-all duration-300',
+                    isActive ? 'text-white font-semibold' : ''
+                  )}>
+                    {item.label}
+                  </span>
+                )}
+              </button>
+            );
+          })}
+        </div>
       </nav>
 
       {/* User Section */}
-      <div className={cn('border-t border-slate-200 bg-white', collapsed ? 'p-2' : 'p-4')}>
+      <div className={cn('border-t border-white/5 shrink-0', collapsed ? 'p-2' : 'p-4')}>
         {!collapsed && (
-          <div className="flex items-center gap-3 mb-3">
-            <div className="h-9 w-9 bg-navy text-gold rounded-full flex items-center justify-center text-sm font-bold border border-gold/20 shadow-inner shrink-0">
+          <div className="flex items-center gap-3 mb-3 px-1">
+            <div className="h-9 w-9 rounded-xl gradient-gold flex items-center justify-center text-xs font-extrabold text-navy-dark shrink-0 shadow-gold">
               {authState.user?.name[0]}
             </div>
             <div className="min-w-0">
-              <p className="text-[11px] font-bold text-navy leading-none truncate">{authState.user?.name}</p>
-              <p className="text-[9px] text-slate-400 font-medium uppercase mt-1">{authState.user?.role}</p>
+              <p className="text-sm font-semibold text-white leading-none truncate">{authState.user?.name}</p>
+              <p className="text-[10px] text-gold/70 capitalize mt-1 font-medium tracking-wide">{authState.user?.role}</p>
             </div>
           </div>
         )}
         <button
           onClick={logout}
           className={cn(
-            'flex items-center gap-2 text-slate-400 hover:text-red-500 transition-colors rounded-lg hover:bg-red-50',
-            collapsed ? 'p-2 mx-auto' : 'px-3 py-2 w-full'
+            'flex items-center gap-2 text-slate-500 hover:text-red-400 transition-all duration-300 rounded-xl hover:bg-red-500/10',
+            collapsed ? 'p-2.5 mx-auto' : 'px-4 py-2.5 w-full'
           )}
-          title="Logout"
         >
           <LogOut className="w-4 h-4" />
-          {!collapsed && <span className="text-[10px] font-bold uppercase tracking-widest">Logout</span>}
+          {!collapsed && <span className="text-xs font-semibold">Sign Out</span>}
         </button>
       </div>
 
       {/* Collapse toggle (desktop) */}
       <button
         onClick={() => setCollapsed(!collapsed)}
-        className="hidden lg:flex absolute -right-3 top-20 h-6 w-6 bg-white border border-slate-200 rounded-full items-center justify-center text-slate-400 hover:text-navy shadow-sm"
+        className="hidden lg:flex absolute -right-3 top-20 h-6 w-6 bg-navy-light border border-white/10 rounded-full items-center justify-center text-slate-400 hover:text-gold hover:border-gold/40 hover:shadow-gold transition-all duration-300 hover:scale-110 z-20"
       >
         {collapsed ? <ChevronRight className="w-3 h-3" /> : <ChevronLeft className="w-3 h-3" />}
       </button>
@@ -106,20 +125,27 @@ export const Navigation: React.FC = () => {
       {/* Mobile menu button */}
       <button
         onClick={() => setMobileOpen(true)}
-        className="lg:hidden fixed top-3 left-3 z-50 p-2 bg-white rounded-lg shadow-md border border-slate-200"
+        className="lg:hidden fixed top-4 left-4 z-50 p-2.5 bg-navy rounded-xl shadow-navy border border-white/10 hover:border-gold/30 transition-all duration-300"
       >
-        <Menu className="w-5 h-5 text-navy" />
+        <Menu className="w-5 h-5 text-gold" />
       </button>
 
       {/* Mobile overlay */}
       {mobileOpen && (
-        <div className="lg:hidden fixed inset-0 bg-black/50 z-40" onClick={() => setMobileOpen(false)} />
+        <div className="lg:hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-40 animate-fade-in" onClick={() => setMobileOpen(false)}>
+          <button
+            onClick={() => setMobileOpen(false)}
+            className="absolute top-4 right-4 p-2 text-white/60 hover:text-white transition-colors"
+          >
+            <X className="w-6 h-6" />
+          </button>
+        </div>
       )}
 
       {/* Mobile sidebar */}
       <div
         className={cn(
-          'lg:hidden fixed top-0 left-0 h-full w-64 bg-slate-50 z-50 flex flex-col border-r border-slate-200 transition-transform duration-300',
+          'lg:hidden fixed top-0 left-0 h-full w-72 gradient-navy z-50 flex flex-col border-r border-white/5 transition-transform duration-300 shadow-premium-lg',
           mobileOpen ? 'translate-x-0' : '-translate-x-full'
         )}
       >
@@ -129,8 +155,8 @@ export const Navigation: React.FC = () => {
       {/* Desktop sidebar */}
       <div
         className={cn(
-          'hidden lg:flex flex-col h-full bg-slate-50 border-r border-slate-200 shadow-inner relative shrink-0 transition-all duration-300',
-          collapsed ? 'w-16' : 'w-64'
+          'hidden lg:flex flex-col h-full gradient-navy border-r border-white/5 relative shrink-0 transition-all duration-300',
+          collapsed ? 'w-[68px]' : 'w-[260px]'
         )}
       >
         <NavContent />
