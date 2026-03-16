@@ -26,12 +26,12 @@ export const getNavigationItems = (role: UserRole): NavItem[] => {
     admin: [
       { path: 'users', label: 'User Management', icon: 'Users' },
       { path: 'cases', label: 'Case Management', icon: 'Briefcase' },
-      { path: 'financials', label: 'Financial Records', icon: 'DollarSign' },
+      { path: 'financials', label: 'Financial Records', icon: 'Banknote' },
       { path: 'analytics', label: 'Analytics', icon: 'BarChart3' },
       { path: 'reports', label: 'Shared Reports', icon: 'FileText' },
     ],
     accountant: [
-      { path: 'financials', label: 'Financial Records', icon: 'DollarSign' },
+      { path: 'financials', label: 'Financial Records', icon: 'Banknote' },
       { path: 'analytics', label: 'Analytics', icon: 'BarChart3' },
       { path: 'reports', label: 'Shared Reports', icon: 'FileText' },
     ],

@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { cn } from './index';
-import { Search, Filter, ArrowUpDown, MoreVertical } from 'lucide-react';
+import { Search, Filter, ArrowUpDown, Eye } from 'lucide-react';
 
 interface Column<T> {
   key: keyof T | string;
@@ -17,7 +17,6 @@ interface DataGridProps<T> {
   filterable?: boolean;
   className?: string;
   onRowClick?: (row: T) => void;
-  emptyState?: React.ReactNode;
 }
 
 export function DataGrid<T extends Record<string, any>>({
@@ -27,7 +26,6 @@ export function DataGrid<T extends Record<string, any>>({
   filterable = true,
   className,
   onRowClick,
-  emptyState,
 }: DataGridProps<T>) {
   const [searchQuery, setSearchQuery] = useState('');
   const [sortColumn, setSortColumn] = useState<keyof T | null>(null);
@@ -87,22 +85,22 @@ export function DataGrid<T extends Record<string, any>>({
     <div className={cn('bg-white rounded-2xl border border-slate-100/60 overflow-hidden shadow-premium', className)}>
       {/* Header with Search */}
       {(searchable || filterable) && (
-        <div className="p-4 border-b border-slate-100/80 flex items-center gap-4 bg-slate-50/30">
+        <div className="p-4 border-b-2 border-slate-200 flex items-center gap-4 bg-slate-100">
           {searchable && (
             <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-600 z-10" />
               <input
                 type="text"
                 placeholder="Search..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200/60 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-gold/15 focus:border-gold/40 transition-all duration-300 placeholder:text-slate-300"
+                className="w-full pl-10 pr-4 py-3 bg-white border-2 border-slate-400/60 rounded-xl text-sm focus:outline-none focus:ring-4 focus:ring-gold/20 focus:border-gold transition-all duration-300 placeholder:text-slate-500 font-black shadow-sm"
               />
             </div>
           )}
           {filterable && (
-            <button className="px-4 py-2.5 text-sm text-slate-500 hover:text-navy bg-white border border-slate-200/60 hover:border-slate-300 rounded-xl transition-all duration-200 flex items-center gap-2 font-medium">
-              <Filter className="w-4 h-4" />
+            <button className="px-5 py-3 text-sm text-navy-dark hover:text-white bg-white hover:bg-navy border-2 border-slate-400/80 hover:border-navy rounded-xl transition-all duration-300 flex items-center gap-2 font-black shadow-sm group">
+              <Filter className="w-4 h-4 text-gold group-hover:text-white" />
               Filters
             </button>
           )}
@@ -118,7 +116,7 @@ export function DataGrid<T extends Record<string, any>>({
                 <th
                   key={column.key as string}
                   className={cn(
-                    'px-6 py-4 text-left text-[10px] font-bold uppercase tracking-[0.15em]',
+                    'px-6 py-4 text-left text-[10px] font-black uppercase tracking-[0.2em] text-slate-500',
                     column.sortable && 'cursor-pointer hover:text-gold transition-colors duration-200'
                   )}
                   style={{ width: column.width }}
@@ -151,13 +149,20 @@ export function DataGrid<T extends Record<string, any>>({
                 onClick={() => onRowClick?.(row)}
               >
                 {columns.map((column) => (
-                  <td key={column.key as string} className="px-6 py-4 text-sm text-slate-700">
+                  <td key={column.key as string} className="px-6 py-4 text-sm text-navy font-bold">
                     {column.render ? column.render(row[column.key], row) : row[column.key]}
                   </td>
                 ))}
                 <td className="px-6 py-4 text-right">
-                  <button className="p-1.5 hover:bg-slate-100 rounded-lg transition-all duration-200 opacity-0 group-hover:opacity-100">
-                    <MoreVertical className="w-4 h-4 text-slate-400" />
+                  <button 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onRowClick?.(row);
+                    }}
+                    className="p-2 rounded-xl bg-slate-100 text-slate-600 hover:bg-gold hover:text-navy transition-all duration-300 shadow-sm border border-slate-200"
+                    title="View Details"
+                  >
+                    <Eye className="w-4 h-4" />
                   </button>
                 </td>
               </tr>

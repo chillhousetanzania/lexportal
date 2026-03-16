@@ -1,26 +1,49 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { Card, Button, Input } from '../ui';
-import { Shield, AlertTriangle, Lock, Key, User, Fingerprint } from 'lucide-react';
+import { 
+  ShieldAlert, Lock, Key, User, Fingerprint, 
+  CheckCircle2, Scale, AlertTriangle, Shield 
+} from 'lucide-react';
+
+const LoginHeader = () => (
+  <div className="flex items-center justify-between w-full px-6 py-4 absolute top-0 left-0 z-10">
+    <div className="flex items-center gap-3">
+      <div className="h-10 w-10 gradient-gold rounded-xl flex items-center justify-center shadow-gold">
+        <Scale className="w-5 h-5 text-navy-dark" />
+      </div>
+      <div>
+        <h1 className="text-sm font-black text-white uppercase tracking-tighter leading-none">
+          LexPortal
+        </h1>
+        <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Legal Management System</span>
+      </div>
+    </div>
+    <div className="flex items-center gap-2 text-slate-400 group cursor-default">
+      <Lock className="w-3 h-3 transition-colors duration-300" />
+      <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 group-hover:text-gold transition-colors duration-300">Secure Access</span>
+    </div>
+  </div>
+);
 
 export const LoginPage: React.FC = () => {
   const { login } = useApp();
-  const [formData, setFormData] = useState({ email: '', password: '' });
+  const [formData, setFormData] = useState({ username: '', password: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
 
-    if (!formData.email || !formData.password) {
+    if (!formData.username || !formData.password) {
       setError('Please fill in all required fields.');
       return;
     }
 
     setLoading(true);
     try {
-      await login({ email: formData.email, password: formData.password });
+      await login({ username: formData.username, password: formData.password });
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An unexpected error occurred.');
     } finally {
@@ -29,173 +52,148 @@ export const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen gradient-hero bg-grid-pattern">
-      {/* Government Header Bar */}
-      <div className="border-b border-white/5">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4">
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-3">
-                <div className="w-11 h-11 gradient-gold rounded-xl flex items-center justify-center shadow-gold animate-pulse-glow">
-                  <Shield className="w-6 h-6 text-navy-dark" />
-                </div>
-                <div>
-                  <h1 className="text-lg font-bold text-white tracking-tight">Judicial Management System</h1>
-                  <p className="text-[11px] text-slate-400 font-medium tracking-wider">OFFICIAL GOVERNMENT PORTAL — REPUBLIC OF TANZANIA</p>
-                </div>
-              </div>
-            </div>
-            <div className="flex items-center space-x-2 text-xs text-slate-500">
-              <Lock className="w-3.5 h-3.5" />
-              <span className="font-semibold tracking-wider uppercase">Secure Access</span>
-            </div>
+    <div className="min-h-screen gradient-hero bg-grid-pattern flex flex-col items-center justify-center px-4 py-20 relative">
+      {/* Header Area */}
+      <LoginHeader />
+
+      <div className="w-full max-w-lg animate-slide-up">
+        {/* Security Notice */}
+        <div className="p-4 bg-white/5 backdrop-blur-md flex items-start gap-4 rounded-3xl border border-white/10 mb-6 animate-fade-in shadow-premium">
+          <div className="mt-1 p-2 bg-gold/10 rounded-xl">
+            <ShieldAlert className="w-5 h-5 text-gold" />
+          </div>
+          <div>
+            <h4 className="text-[11px] font-black text-white uppercase tracking-tight mb-1">Authorized Access Only</h4>
+            <p className="text-[11px] text-slate-400 leading-relaxed font-medium">
+              This system is restricted to authorized firm personnel. Unauthorized access is prohibited and subject to monitoring.
+            </p>
           </div>
         </div>
-      </div>
 
-      {/* Main Content */}
-      <div className="flex items-center justify-center min-h-[calc(100vh-72px)] px-4 py-12">
-        <div className="w-full max-w-lg animate-slide-up">
-          {/* Security Notice */}
-          <div className="glass-dark rounded-2xl p-4 mb-6 animate-fade-in">
-            <div className="flex items-start space-x-3">
-              <div className="w-8 h-8 bg-amber-500/10 rounded-lg flex items-center justify-center shrink-0 mt-0.5">
-                <AlertTriangle className="w-4 h-4 text-amber-400" />
+        {/* Login Card */}
+        <div className="glass-dark rounded-[2.5rem] overflow-hidden shadow-premium-lg animate-scale-in delay-1 border border-white/5 relative">
+          <div className="p-8 sm:p-12">
+            {/* Logo/Icon Area */}
+            <div className="text-center mb-10">
+              <div className="h-20 w-20 gradient-gold rounded-[2rem] flex items-center justify-center shadow-gold mx-auto mb-6 transform -rotate-3 hover:rotate-0 transition-transform duration-500 relative">
+                <Key className="w-10 h-10 text-navy-dark" />
+                <div className="absolute -bottom-1 -right-1 h-7 w-7 bg-emerald-500 rounded-xl border-4 border-navy flex items-center justify-center shadow-lg">
+                  <CheckCircle2 className="w-4 h-4 text-white" />
+                </div>
               </div>
-              <div>
-                <h3 className="text-sm font-bold text-amber-300">Authorized Personnel Only</h3>
-                <p className="text-xs text-slate-400 mt-1 leading-relaxed">
-                  This system is restricted to authorized users for official government business.
-                  Unauthorized access is prohibited and subject to prosecution under Tanzanian law.
-                </p>
-              </div>
+              <h2 className="text-4xl font-black text-white tracking-tight mb-2">Secure Login</h2>
+              <p className="text-[13px] text-slate-400 font-medium">Access your legal workspace</p>
             </div>
-          </div>
 
-          {/* Login Card */}
-          <div className="glass-dark rounded-3xl overflow-hidden shadow-premium-lg animate-scale-in delay-1">
-            <div className="p-8 sm:p-10">
-              {/* Header */}
-              <div className="text-center mb-8">
-                <div className="w-20 h-20 mx-auto mb-5 relative">
-                  <div className="w-20 h-20 gradient-gold rounded-2xl flex items-center justify-center shadow-gold animate-pulse-glow">
-                    <Key className="w-9 h-9 text-navy-dark" />
-                  </div>
-                  <div className="absolute -bottom-1 -right-1 w-7 h-7 bg-emerald-500 rounded-lg flex items-center justify-center border-2 border-navy">
-                    <Fingerprint className="w-4 h-4 text-white" />
-                  </div>
+            {error && (
+              <div className="bg-red-500/10 border border-red-500/20 rounded-2xl p-4 mb-8 animate-shake">
+                <div className="flex items-center space-x-3">
+                  <AlertTriangle className="w-4 h-4 text-red-400 shrink-0" />
+                  <p className="text-sm text-red-300 font-medium">{error}</p>
                 </div>
-                <h2 className="text-2xl font-black text-white mb-2 tracking-tight">Secure Login</h2>
-                <p className="text-sm text-slate-400">
-                  Enter your government credentials to access the system
-                </p>
               </div>
+            )}
 
-              {error && (
-                <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4 mb-6 animate-scale-in">
-                  <div className="flex items-center space-x-2">
-                    <AlertTriangle className="w-4 h-4 text-red-400" />
-                    <p className="text-sm text-red-300 font-medium">{error}</p>
+            {/* Form */}
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="space-y-2">
+                <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">Username</label>
+                <div className="relative group">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <User className="h-4 w-4 text-slate-500 group-focus-within:text-gold transition-colors duration-300" />
                   </div>
-                </div>
-              )}
-
-              {/* Form */}
-              <form onSubmit={handleLogin} className="space-y-5">
-                <div>
-                  <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-[0.15em] mb-2 ml-0.5">
-                    <User className="w-3.5 h-3.5 inline mr-1.5 -mt-0.5" />
-                    Government Email Address
-                  </label>
                   <input
-                    type="email"
+                    type="text"
                     required
-                    placeholder="name@justice.gov.tz"
-                    value={formData.email}
-                    onChange={e => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full px-4 py-3.5 bg-white/5 border-2 border-white/10 rounded-xl outline-none transition-all duration-300 font-medium text-white text-sm placeholder:text-slate-500 hover:border-white/20 focus:border-gold/60 focus:ring-2 focus:ring-gold/10 focus:bg-white/[0.07]"
+                    className="block w-full pl-11 pr-4 py-4 bg-white/5 border border-white/10 rounded-2xl text-white text-sm font-semibold placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-gold/20 focus:border-gold/40 focus:bg-white/10 transition-all duration-300"
+                    placeholder="Enter your username"
+                    value={formData.username}
+                    onChange={(e) => setFormData({ ...formData, username: e.target.value })}
                   />
                 </div>
+              </div>
 
-                <div>
-                  <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-[0.15em] mb-2 ml-0.5">
-                    <Lock className="w-3.5 h-3.5 inline mr-1.5 -mt-0.5" />
-                    Secure Password
-                  </label>
+              <div className="space-y-2">
+                <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">Password</label>
+                <div className="relative group">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <Lock className="h-4 w-4 text-slate-500 group-focus-within:text-gold transition-colors duration-300" />
+                  </div>
                   <input
                     type="password"
                     required
-                    placeholder="Enter your secure password"
+                    className="block w-full pl-11 pr-4 py-4 bg-white/5 border border-white/10 rounded-2xl text-white text-sm font-semibold placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-gold/20 focus:border-gold/40 focus:bg-white/10 transition-all duration-300"
+                    placeholder="••••••••"
                     value={formData.password}
-                    onChange={e => setFormData({ ...formData, password: e.target.value })}
-                    className="w-full px-4 py-3.5 bg-white/5 border-2 border-white/10 rounded-xl outline-none transition-all duration-300 font-medium text-white text-sm placeholder:text-slate-500 hover:border-white/20 focus:border-gold/60 focus:ring-2 focus:ring-gold/10 focus:bg-white/[0.07]"
+                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                   />
                 </div>
+              </div>
 
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full py-4 gradient-gold text-navy-dark font-extrabold text-sm uppercase tracking-wider rounded-xl shadow-gold hover:shadow-lg hover:brightness-110 transition-all duration-300 active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed disabled:saturate-0"
-                >
-                  {loading ? (
-                    <div className="flex items-center justify-center space-x-2">
-                      <div className="w-4 h-4 border-2 border-navy-dark border-t-transparent rounded-full animate-spin"></div>
-                      <span>Authenticating...</span>
-                    </div>
-                  ) : (
-                    'Access System'
-                  )}
-                </button>
-              </form>
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full py-5 gradient-gold text-navy-dark font-black text-xs uppercase tracking-[0.2em] rounded-2xl shadow-gold hover:shadow-lg hover:brightness-110 transition-all duration-300 active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed mt-4"
+              >
+                {loading ? (
+                  <div className="flex items-center justify-center space-x-3">
+                    <div className="w-4 h-4 border-2 border-navy-dark border-t-transparent rounded-full animate-spin"></div>
+                    <span>Authenticating</span>
+                  </div>
+                ) : (
+                  'Enter Portal'
+                )}
+              </button>
+            </form>
 
-              {/* Security Footer */}
-              <div className="mt-8 pt-6 border-t border-white/5">
-                <div className="flex items-center justify-center space-x-8 text-[10px] text-slate-500 font-medium uppercase tracking-wider">
-                  <div className="flex items-center space-x-1.5">
-                    <Shield className="w-3 h-3 text-gold/60" />
-                    <span>AES-256 Encrypted</span>
+            {/* Security Footer */}
+            <div className="mt-10 pt-8 border-t border-white/5">
+              <div className="grid grid-cols-3 gap-2">
+                {[
+                  { icon: Shield, text: 'AES-256' },
+                  { icon: Lock, text: 'MFA Ready' },
+                  { icon: Fingerprint, text: 'ISO Compliant' }
+                ].map((item, i) => (
+                  <div key={i} className="flex flex-col items-center gap-2">
+                    <item.icon className="w-4 h-4 text-gold/40" />
+                    <span className="text-[9px] font-bold text-slate-500 uppercase tracking-widest text-center">{item.text}</span>
                   </div>
-                  <div className="flex items-center space-x-1.5">
-                    <Lock className="w-3 h-3 text-gold/60" />
-                    <span>Multi-Factor Auth</span>
-                  </div>
-                  <div className="flex items-center space-x-1.5">
-                    <Fingerprint className="w-3 h-3 text-gold/60" />
-                    <span>Biometric Ready</span>
-                  </div>
-                </div>
+                ))}
               </div>
             </div>
           </div>
+        </div>
 
-          {/* Demo Access */}
-          <div className="mt-6 glass-dark rounded-2xl p-6 animate-slide-up delay-2">
-            <h3 className="text-sm font-bold text-white/80 mb-4 text-center tracking-tight">Demo Access Credentials</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {[
-                { role: 'System Administrator', email: 'admin@justice.gov.tz', pass: 'admin123', color: 'from-red-500/10 to-red-500/5 border-red-500/20 hover:border-red-400/40', iconColor: 'text-red-400' },
-                { role: 'Senior Litigator', email: 'litigator@justice.gov.tz', pass: 'lit123', color: 'from-blue-500/10 to-blue-500/5 border-blue-500/20 hover:border-blue-400/40', iconColor: 'text-blue-400' },
-                { role: 'Financial Officer', email: 'accountant@justice.gov.tz', pass: 'acc123', color: 'from-emerald-500/10 to-emerald-500/5 border-emerald-500/20 hover:border-emerald-400/40', iconColor: 'text-emerald-400' },
-                { role: 'Legal Counsel', email: 'counsel@justice.gov.tz', pass: 'client123', color: 'from-purple-500/10 to-purple-500/5 border-purple-500/20 hover:border-purple-400/40', iconColor: 'text-purple-400' },
-              ].map(acct => (
-                <button
-                  key={acct.role}
-                  type="button"
-                  onClick={() => setFormData({ email: acct.email, password: acct.pass })}
-                  className={`p-4 rounded-xl border bg-gradient-to-br ${acct.color} hover:shadow-lg transition-all duration-300 text-left group active:scale-[0.98]`}
-                >
-                  <div className="font-bold text-white/90 text-sm group-hover:text-white transition-colors">{acct.role}</div>
-                  <div className="text-[11px] text-slate-400 mt-1.5 font-medium">{acct.email}</div>
-                  <div className="text-[10px] text-slate-500 mt-0.5 font-mono">Pass: {acct.pass}</div>
-                </button>
-              ))}
-            </div>
+        {/* Demo Access */}
+        <div className="mt-8 glass-dark rounded-3xl p-6 border border-white/5 animate-slide-up delay-2">
+          <h3 className="text-xs font-black text-slate-300 mb-5 text-center uppercase tracking-[0.15em]">Quick Access / Demo Accounts</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {[
+              { role: 'Administrator', username: 'admin_tz', pass: 'admin123', color: 'bg-white/5 hover:bg-white/10' },
+              { role: 'Senior Litigator', username: 'lit_musa', pass: 'lit123', color: 'bg-white/5 hover:bg-white/10' },
+              { role: 'Financial Officer', username: 'acc_juma', pass: 'acc123', color: 'bg-white/5 hover:bg-white/10' },
+              { role: 'Advisory Client', username: 'adv_kibo', pass: 'adv123', color: 'bg-white/5 hover:bg-white/10' },
+            ].map(acct => (
+              <button
+                key={acct.role}
+                type="button"
+                onClick={() => setFormData({ username: acct.username, password: acct.pass })}
+                className={`p-4 rounded-2xl border border-white/5 ${acct.color} transition-all duration-300 text-left group active:scale-[0.95]`}
+              >
+                <div className="text-[10px] font-black text-gold/80 uppercase tracking-wider mb-1">{acct.role}</div>
+                <div className="font-bold text-white text-sm">{acct.username}</div>
+              </button>
+            ))}
           </div>
+        </div>
 
-          {/* Footer */}
-          <div className="mt-8 text-center text-[11px] text-slate-600 animate-fade-in delay-3">
-            <p className="font-medium">© 2024 Judicial Management System — Republic of Tanzania. All rights reserved.</p>
-            <p className="mt-1.5 text-slate-500">For technical support: support@justice.gov.tz | +255 22 211 1234</p>
+        {/* Footer */}
+        <div className="mt-12 text-center text-[10px] text-slate-600 animate-fade-in delay-3 uppercase tracking-widest font-bold">
+          <p>© 2024 LexPortal Legal Management. All rights reserved.</p>
+          <div className="mt-3 flex items-center justify-center gap-4">
+            <span className="hover:text-gold transition-colors cursor-pointer">Security Policy</span>
+            <span className="w-1 h-1 bg-slate-800 rounded-full"></span>
+            <span className="hover:text-gold transition-colors cursor-pointer">Legal Notice</span>
           </div>
         </div>
       </div>

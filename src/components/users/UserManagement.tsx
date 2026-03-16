@@ -61,7 +61,7 @@ const UserForm: React.FC<{
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <Input label="Full Name" required placeholder="John Doe" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} />
           <Input label="Username" required placeholder="johndoe" value={form.username} onChange={e => setForm({ ...form, username: e.target.value })} />
-          <Input label="Email" type="email" required placeholder="john@justice.gov.tz" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} />
+          <Input label="Email" type="email" required placeholder="john@lexportal.com" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} />
           {mode === 'create' && (
             <Input label="Password" type="password" required placeholder="Min 6 characters" value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} />
           )}
@@ -164,18 +164,15 @@ const UserManagementContent: React.FC = () => {
         </Button>
       </PageHeader>
 
-      <Card className="mb-6 p-4 animate-slide-up">
-        <div className="flex items-center gap-3">
-          <Search className="w-4 h-4 text-slate-300" />
-          <input
-            type="text"
-            placeholder="Search users by name, email, or role..."
-            className="flex-1 text-sm outline-none text-navy bg-transparent placeholder:text-slate-300"
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-          />
-        </div>
-      </Card>
+      <div className="mb-8 animate-slide-up">
+        <Input
+          placeholder="Search users by name, email, or role..."
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+          className="max-w-2xl"
+          icon={<Search className="w-5 h-5 text-slate-600" />}
+        />
+      </div>
 
       <Card className="overflow-hidden animate-slide-up delay-1">
         <div className="overflow-x-auto">
@@ -201,8 +198,8 @@ const UserManagementContent: React.FC = () => {
                         {user.name[0]}
                       </div>
                       <div>
-                        <p className="font-semibold text-navy text-sm">{user.name}</p>
-                        <p className="text-slate-400 text-[10px] font-medium">{user.email}</p>
+                        <p className="font-black text-navy text-sm">{user.name}</p>
+                        <p className="text-slate-600 text-[11px] font-bold tracking-tight">{user.email}</p>
                       </div>
                     </div>
                   </td>
@@ -212,7 +209,7 @@ const UserManagementContent: React.FC = () => {
                   <td className="px-6 py-4">
                     <Badge variant={statusBadgeVariant(user.status)} size="sm">{user.status}</Badge>
                   </td>
-                  <td className="px-6 py-4 text-slate-400 text-xs font-medium">
+                  <td className="px-6 py-4 text-slate-600 text-xs font-black">
                     {user.createdAt.toLocaleDateString()}
                   </td>
                   <td className="px-6 py-4 text-right">

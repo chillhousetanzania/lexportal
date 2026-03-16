@@ -22,7 +22,7 @@ describe('Authentication Module - Property Tests', () => {
     fc.assert(
       fc.property(credentialsArb, (creds) => {
         const user = seedUsers.find(
-          u => u.email === creds.email && u.password === creds.password
+          u => u.username === creds.username && u.password === creds.password
         );
         // Random credentials should almost never match seed data
         // This validates the lookup mechanism rejects non-matches

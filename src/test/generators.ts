@@ -77,7 +77,7 @@ export const sharedResourceArb = fc.record({
 
 // --- Credentials Generator ---
 export const credentialsArb = fc.record({
-  email: fc.emailAddress(),
+  username: fc.string({ minLength: 3, maxLength: 20 }),
   password: fc.string({ minLength: 6, maxLength: 30 }),
 });
 

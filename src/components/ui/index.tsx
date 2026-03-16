@@ -137,6 +137,7 @@ interface InputProps {
   disabled?: boolean;
   className?: string;
   error?: string;
+  icon?: React.ReactNode;
 }
 
 export const Input: React.FC<InputProps> = ({
@@ -149,6 +150,7 @@ export const Input: React.FC<InputProps> = ({
   disabled,
   className,
   error,
+  icon,
 }) => {
   return (
     <div className={cn('space-y-1.5', className)}>
@@ -158,23 +160,31 @@ export const Input: React.FC<InputProps> = ({
           {required && <span className="text-gold text-xs">*</span>}
         </label>
       )}
-      <input
-        type={type}
-        required={required}
-        disabled={disabled}
-        placeholder={placeholder}
-        value={value}
-        onChange={onChange}
-        className={cn(
-          'w-full px-4 py-3 bg-slate-50/80 border-2 rounded-xl outline-none transition-all duration-300 font-medium text-navy text-sm',
-          'placeholder:text-slate-300 placeholder:font-normal',
-          'hover:bg-white hover:border-slate-200',
-          error
-            ? 'border-red-300 focus:border-red-500 focus:ring-2 focus:ring-red-100'
-            : 'border-slate-100 focus:border-gold focus:ring-2 focus:ring-gold/10 focus:bg-white',
-          disabled && 'opacity-40 cursor-not-allowed bg-slate-100'
+      <div className="relative">
+        {icon && (
+          <div className="absolute left-4 top-1/2 -translate-y-1/2 flex items-center justify-center pointer-events-none">
+            {icon}
+          </div>
         )}
-      />
+        <input
+          type={type}
+          required={required}
+          disabled={disabled}
+          placeholder={placeholder}
+          value={value}
+          onChange={onChange}
+          className={cn(
+            'w-full py-3 bg-white border-2 rounded-xl outline-none transition-all duration-300 font-bold text-navy text-sm',
+            icon ? 'pl-11 pr-4' : 'px-4',
+            'placeholder:text-slate-500 placeholder:font-bold',
+            'hover:border-slate-400',
+            error
+              ? 'border-red-500 focus:border-red-600 focus:ring-4 focus:ring-red-100'
+              : 'border-slate-300 focus:border-gold focus:ring-4 focus:ring-gold/15',
+            disabled && 'opacity-40 cursor-not-allowed bg-slate-100'
+          )}
+        />
+      </div>
       {error && <p className="text-red-500 text-[10px] font-semibold ml-0.5">{error}</p>}
     </div>
   );
@@ -214,9 +224,9 @@ export const Select: React.FC<SelectProps> = ({
         required={required}
         disabled={disabled}
         className={cn(
-          'w-full px-4 py-3 bg-slate-50/80 border-2 border-slate-100 rounded-xl outline-none transition-all duration-300 font-medium text-navy text-sm appearance-none',
-          'hover:bg-white hover:border-slate-200',
-          'focus:border-gold focus:ring-2 focus:ring-gold/10 focus:bg-white',
+          'w-full px-4 py-3 bg-white border-2 border-slate-300 rounded-xl outline-none transition-all duration-300 font-bold text-navy text-sm appearance-none',
+          'hover:border-slate-400',
+          'focus:border-gold focus:ring-4 focus:ring-gold/15',
           disabled && 'opacity-40 cursor-not-allowed'
         )}
       >
@@ -265,10 +275,10 @@ export const Textarea: React.FC<TextareaProps> = ({
         required={required}
         rows={rows}
         className={cn(
-          'w-full px-4 py-3 bg-slate-50/80 border-2 border-slate-100 rounded-xl outline-none transition-all duration-300 font-medium text-navy text-sm resize-none',
-          'placeholder:text-slate-300 placeholder:font-normal',
-          'hover:bg-white hover:border-slate-200',
-          'focus:border-gold focus:ring-2 focus:ring-gold/10 focus:bg-white'
+          'w-full px-4 py-3 bg-white border-2 border-slate-300 rounded-xl outline-none transition-all duration-300 font-bold text-navy text-sm resize-none',
+          'placeholder:text-slate-500 placeholder:font-bold',
+          'hover:border-slate-400',
+          'focus:border-gold focus:ring-4 focus:ring-gold/15'
         )}
       />
     </div>

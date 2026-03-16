@@ -1,15 +1,15 @@
 @import "tailwindcss";
 
 @theme {
-  --color-navy: #0f172a;
-  --color-navy-light: #1e293b;
-  --color-navy-dark: #020617;
+  --color-navy: #1c1c1c;
+  --color-navy-light: #2d2d2d;
+  --color-navy-dark: #121212;
   --color-gold: #d4af37;
   --color-gold-dark: #b8860b;
   --color-gold-light: #f0d878;
-  --color-grey-light: #f8fafc;
+  --color-grey-light: #f1f5f9;
   --color-surface: #ffffff;
-  --color-surface-hover: #f1f5f9;
+  --color-surface-hover: #e2e8f0;
 
   --font-inter: "Inter", sans-serif;
   --font-size-xxs: 0.65rem;
@@ -107,7 +107,11 @@
 /* ===== Base Styles ===== */
 @layer base {
   body {
-    @apply bg-grey-light font-inter text-slate-800 antialiased;
+    @apply bg-grey-light font-inter text-navy antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply text-navy font-black tracking-tight;
   }
 
   * {
@@ -136,10 +140,14 @@
 }
 
 .glass-card {
-  background: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(226, 232, 240, 0.6);
+  border: 2px solid rgba(203, 213, 225, 0.8);
+}
+
+.card-premium {
+  @apply bg-white rounded-3xl border-2 border-slate-300/80 shadow-premium transition-all duration-300;
 }
 
 /* ===== Premium Shadows ===== */

@@ -68,7 +68,7 @@ const AdminDashboard: React.FC = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Revenue</p>
-              <p className="text-2xl font-black text-navy">${stats.revenue.toLocaleString()}</p>
+              <p className="text-2xl font-black text-navy">TZS {stats.revenue.toLocaleString()}</p>
               <p className="text-[10px] text-emerald-500">Net: ${stats.netIncome.toLocaleString()}</p>
             </div>
             <TrendingUp className="w-8 h-8 text-emerald-400" />
@@ -157,7 +157,7 @@ const AccountantDashboard: React.FC = () => {
                 <p className="text-slate-400 text-[10px]">{r.category} - {r.transactionDate.toLocaleDateString()}</p>
               </div>
               <span className={`font-bold text-sm ${r.type === 'revenue' ? 'text-emerald-600' : 'text-red-500'}`}>
-                {r.type === 'expense' ? '-' : '+'}${r.amount.toLocaleString()}
+                {r.type === 'expense' ? '-' : '+'}TZS {r.amount.toLocaleString()}
               </span>
             </div>
           ))}

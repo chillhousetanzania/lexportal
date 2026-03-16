@@ -9,7 +9,7 @@ import {
   LineChart, Line, BarChart, Bar, PieChart, Pie, Cell,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
 } from 'recharts';
-import { DollarSign, TrendingUp, TrendingDown, Activity, BarChart3 } from 'lucide-react';
+import { Coins, TrendingUp, TrendingDown, Activity, BarChart3 } from 'lucide-react';
 
 const COLORS = ['#d4af37', '#0f172a', '#6366f1', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4'];
 
@@ -102,7 +102,7 @@ const FinancialAnalyticsContent: React.FC = () => {
                 'px-4 py-2 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all duration-300',
                 timePreset === preset
                   ? 'gradient-navy text-gold shadow-navy'
-                  : 'text-slate-400 hover:text-navy hover:bg-white'
+                  : 'text-slate-600 hover:text-navy hover:bg-white font-black'
               )}
             >
               {preset === 'all' ? 'All Time' : preset === 'year' ? 'Last Year' : 'Last Quarter'}
@@ -119,8 +119,8 @@ const FinancialAnalyticsContent: React.FC = () => {
               <TrendingUp className="w-6 h-6 text-emerald-500" />
             </div>
             <div>
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Revenue</p>
-              <p className="text-xl font-black text-navy">${metrics.totalRevenue.toLocaleString()}</p>
+              <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest">Revenue</p>
+              <p className="text-2xl font-black text-navy mt-1">TZS {metrics.totalRevenue.toLocaleString()}</p>
             </div>
           </div>
         </Card>
@@ -130,20 +130,20 @@ const FinancialAnalyticsContent: React.FC = () => {
               <TrendingDown className="w-6 h-6 text-red-500" />
             </div>
             <div>
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Expenses</p>
-              <p className="text-xl font-black text-navy">${metrics.totalExpenses.toLocaleString()}</p>
+              <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest">Expenses</p>
+              <p className="text-2xl font-black text-navy mt-1">TZS {metrics.totalExpenses.toLocaleString()}</p>
             </div>
           </div>
         </Card>
         <Card className="p-5 group hover:translate-y-[-2px]">
           <div className="flex items-center gap-4">
             <div className="p-3 bg-gold/10 rounded-2xl group-hover:scale-110 transition-transform">
-              <DollarSign className="w-6 h-6 text-gold" />
+              <Coins className="w-6 h-6 text-gold" />
             </div>
             <div>
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Net Income</p>
-              <p className={cn('text-xl font-black', metrics.netIncome >= 0 ? 'text-emerald-600' : 'text-red-500')}>
-                ${metrics.netIncome.toLocaleString()}
+              <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest">Net Income</p>
+              <p className={cn('text-2xl font-black mt-1', metrics.netIncome >= 0 ? 'text-emerald-700' : 'text-red-600')}>
+                TZS {metrics.netIncome.toLocaleString()}
               </p>
             </div>
           </div>
@@ -154,8 +154,8 @@ const FinancialAnalyticsContent: React.FC = () => {
               <Activity className="w-6 h-6 text-blue-500" />
             </div>
             <div>
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Margin</p>
-              <p className="text-xl font-black text-navy">
+              <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest">Margin</p>
+              <p className="text-2xl font-black text-navy mt-1">
                 {metrics.totalRevenue > 0 ? ((metrics.netIncome / metrics.totalRevenue) * 100).toFixed(1) : '0'}%
               </p>
             </div>
@@ -169,11 +169,11 @@ const FinancialAnalyticsContent: React.FC = () => {
         <ResponsiveContainer width="100%" height={300}>
           <LineChart data={revenueData}>
             <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-            <XAxis dataKey="period" tick={{ fontSize: 11 }} stroke="#cbd5e1" />
-            <YAxis tick={{ fontSize: 11 }} stroke="#cbd5e1" />
+            <XAxis dataKey="period" tick={{ fontSize: 11, fontWeight: 'bold' }} stroke="#64748b" />
+            <YAxis tick={{ fontSize: 11, fontWeight: 'bold' }} stroke="#64748b" />
             <Tooltip
               contentStyle={{ borderRadius: '16px', border: '1px solid #e2e8f0', fontSize: '12px', boxShadow: '0 4px 14px rgba(0,0,0,0.06)' }}
-              formatter={(value) => [`$${Number(value).toLocaleString()}`]}
+              formatter={(value) => [`TZS ${Number(value).toLocaleString()}`]}
             />
             <Legend wrapperStyle={{ fontSize: '11px' }} />
             <Line type="monotone" dataKey="revenue" stroke="#d4af37" strokeWidth={2.5} dot={{ fill: '#d4af37', r: 4 }} activeDot={{ r: 6, strokeWidth: 2 }} />
@@ -206,7 +206,7 @@ const FinancialAnalyticsContent: React.FC = () => {
                 </Pie>
                 <Tooltip
                   contentStyle={{ borderRadius: '16px', border: '1px solid #e2e8f0', boxShadow: '0 4px 14px rgba(0,0,0,0.06)' }}
-                  formatter={(value) => [`$${Number(value).toLocaleString()}`]}
+                  formatter={(value) => [`TZS ${Number(value).toLocaleString()}`]}
                 />
               </PieChart>
             </ResponsiveContainer>
@@ -222,11 +222,11 @@ const FinancialAnalyticsContent: React.FC = () => {
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={categoryBarData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-                <XAxis dataKey="category" tick={{ fontSize: 10 }} stroke="#cbd5e1" angle={-20} textAnchor="end" height={60} />
-                <YAxis tick={{ fontSize: 11 }} stroke="#cbd5e1" />
+                <XAxis dataKey="category" tick={{ fontSize: 10, fontWeight: 'bold' }} stroke="#64748b" angle={-20} textAnchor="end" height={60} />
+                <YAxis tick={{ fontSize: 11, fontWeight: 'bold' }} stroke="#64748b" />
                 <Tooltip
                   contentStyle={{ borderRadius: '16px', border: '1px solid #e2e8f0', fontSize: '12px', boxShadow: '0 4px 14px rgba(0,0,0,0.06)' }}
-                  formatter={(value) => [`$${Number(value).toLocaleString()}`]}
+                  formatter={(value) => [`TZS ${Number(value).toLocaleString()}`]}
                 />
                 <Bar dataKey="amount" fill="#0f172a" radius={[8, 8, 0, 0]} />
               </BarChart>

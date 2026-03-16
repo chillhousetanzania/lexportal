@@ -34,6 +34,10 @@ export interface AppContextValue {
   currentPage: string;
   setCurrentPage: (page: string) => void;
 
+  // Case Selection
+  selectedCase: import('./case').CaseRecord | null;
+  setSelectedCase: React.Dispatch<React.SetStateAction<import('./case').CaseRecord | null>>;
+
   // Notifications
   notifications: Notification[];
   addNotification: (type: Notification['type'], message: string) => void;

@@ -12,6 +12,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const [financialRecords, setFinancialRecords] = useState<FinancialRecord[]>(seedFinancialRecords);
   const [sharedResources, setSharedResources] = useState<SharedResource[]>(seedSharedResources);
   const [currentPage, setCurrentPage] = useState('login');
+  const [selectedCase, setSelectedCase] = useState<CaseRecord | null>(null);
 
   const [authState, setAuthState] = useState<AuthState>({
     isAuthenticated: false,
@@ -24,11 +25,11 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
 
   const login = useCallback(async (credentials: Credentials) => {
     const user = users.find(
-      u => u.email === credentials.email && u.password === credentials.password
+      u => u.username === credentials.username && u.password === credentials.password
     );
 
     if (!user) {
-      throw new Error('Invalid email or password.');
+      throw new Error('Invalid username or password.');
     }
 
     if (user.status !== 'active') {
@@ -87,6 +88,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     setSharedResources,
     currentPage,
     setCurrentPage,
+    selectedCase,
+    setSelectedCase,
     notifications,
     addNotification,
     removeNotification,

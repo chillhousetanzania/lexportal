@@ -1,11 +1,11 @@
 import React, { useMemo } from 'react';
 import { useApp } from '../../context/AppContext';
-import { Card, Badge, cn } from '../ui';
+import { Card, Badge, Input, Select } from '../ui';
 import { PageHeader, EmptyState } from '../shared/PageElements';
 import { ErrorBoundary } from '../shared/ErrorBoundary';
 import { filterSharedResourcesByRole } from '../../utils/rbac';
 import type { SharedResource, ResourceType } from '../../types';
-import { FileText, File, FileCode, BarChart, Search, Calendar, User } from 'lucide-react';
+import { FileText, File, FileCode, BarChart, Search, Calendar, User, ArrowLeft } from 'lucide-react';
 
 const typeIcon: Record<ResourceType, React.FC<{ className?: string }>> = {
   report: BarChart,
@@ -51,9 +51,9 @@ const SharedReportsContent: React.FC = () => {
       <div className="p-6 lg:p-8 animate-fade-in">
         <button
           onClick={() => setSelectedResource(null)}
-          className="text-xs font-bold text-slate-400 uppercase tracking-[0.15em] mb-6 hover:text-gold transition-colors inline-flex items-center gap-2"
+          className="text-xs font-black text-slate-600 uppercase tracking-[0.2em] mb-6 hover:text-gold transition-colors inline-flex items-center gap-2 group"
         >
-          &larr; Back to Reports
+          <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" /> Back to Reports
         </button>
 
         <div className="gradient-navy rounded-3xl p-6 sm:p-8 mb-6 text-white relative overflow-hidden">
@@ -67,44 +67,46 @@ const SharedReportsContent: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-          <Card className="p-5">
+          <Card className="p-5 border-2 border-slate-300/60">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 bg-slate-50 rounded-xl flex items-center justify-center">
-                <User className="w-4 h-4 text-slate-400" />
+              <div className="w-10 h-10 bg-slate-100 rounded-xl flex items-center justify-center border border-slate-200">
+                <User className="w-5 h-5 text-navy" />
               </div>
               <div>
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Created By</p>
-                <p className="text-sm font-bold text-navy">{creator?.name || 'Unknown'}</p>
+                <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest">Created By</p>
+                <p className="text-sm font-black text-navy">{creator?.name || 'Unknown'}</p>
               </div>
             </div>
           </Card>
-          <Card className="p-5">
+          <Card className="p-5 border-2 border-slate-300/60">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 bg-slate-50 rounded-xl flex items-center justify-center">
-                <Calendar className="w-4 h-4 text-slate-400" />
+              <div className="w-10 h-10 bg-slate-100 rounded-xl flex items-center justify-center border border-slate-200">
+                <Calendar className="w-5 h-5 text-navy" />
               </div>
               <div>
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Created</p>
-                <p className="text-sm font-bold text-navy">{selectedResource.createdAt.toLocaleDateString()}</p>
+                <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest">Created</p>
+                <p className="text-sm font-black text-navy">{selectedResource.createdAt.toLocaleDateString()}</p>
               </div>
             </div>
           </Card>
-          <Card className="p-5">
+          <Card className="p-5 border-2 border-slate-300/60">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 bg-slate-50 rounded-xl flex items-center justify-center">
-                <FileText className="w-4 h-4 text-slate-400" />
+              <div className="w-10 h-10 bg-slate-100 rounded-xl flex items-center justify-center border border-slate-200">
+                <FileText className="w-5 h-5 text-navy" />
               </div>
               <div>
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Shared With</p>
-                <p className="text-sm font-bold text-navy capitalize">{selectedResource.sharedWith.join(', ')}</p>
+                <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest">Shared With</p>
+                <p className="text-sm font-black text-navy capitalize">{selectedResource.sharedWith.join(', ')}</p>
               </div>
             </div>
           </Card>
         </div>
 
-        <Card className="p-6">
-          <h3 className="text-sm font-black text-navy uppercase tracking-tight mb-3">Description</h3>
-          <p className="text-slate-600 text-sm leading-relaxed">{selectedResource.description}</p>
+        <Card className="p-8 border-2 border-slate-300/60">
+          <h3 className="text-sm font-black text-navy uppercase tracking-tight mb-4 flex items-center gap-2">
+            <span className="w-1.5 h-4 bg-gold rounded-full" /> Description
+          </h3>
+          <p className="text-navy text-sm font-medium leading-relaxed">{selectedResource.description}</p>
         </Card>
       </div>
     );
@@ -118,36 +120,31 @@ const SharedReportsContent: React.FC = () => {
         icon={<FileText className="w-6 h-6 text-white" />}
       />
 
-      <div className="flex flex-col sm:flex-row gap-4 mb-6 animate-slide-up">
-        <Card className="flex-1 p-3.5">
-          <div className="flex items-center gap-3">
-            <Search className="w-4 h-4 text-slate-300" />
-            <input
-              type="text"
-              placeholder="Search reports..."
-              className="flex-1 text-sm outline-none text-navy bg-transparent placeholder:text-slate-300"
-              value={search}
-              onChange={e => setSearch(e.target.value)}
-            />
-          </div>
-        </Card>
-        <Card className="p-3.5">
-          <select
-            className="text-sm outline-none text-navy bg-transparent font-medium"
+      <div className="flex flex-col sm:flex-row gap-5 mb-8 animate-slide-up">
+        <Input
+          placeholder="Search reports or resources..."
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+          className="flex-1"
+          icon={<Search className="w-5 h-5 text-slate-600" />}
+        />
+        <div className="w-full sm:w-56">
+          <Select
             value={typeFilter}
             onChange={e => setTypeFilter(e.target.value as ResourceType | 'all')}
-          >
-            <option value="all">All Types</option>
-            <option value="report">Reports</option>
-            <option value="document">Documents</option>
-            <option value="template">Templates</option>
-            <option value="analysis">Analysis</option>
-          </select>
-        </Card>
+            options={[
+              { value: 'all', label: 'All Types' },
+              { value: 'report', label: 'Reports' },
+              { value: 'document', label: 'Documents' },
+              { value: 'template', label: 'Templates' },
+              { value: 'analysis', label: 'Analysis' },
+            ]}
+          />
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 animate-slide-up delay-1">
-        {filtered.map((resource, index) => {
+        {filtered.map((resource) => {
           const Icon = typeIcon[resource.type];
           const creator = users.find(u => u.id === resource.createdBy);
           return (
@@ -157,20 +154,20 @@ const SharedReportsContent: React.FC = () => {
               onClick={() => setSelectedResource(resource)}
             >
               <div className="flex items-start gap-4">
-                <div className="h-11 w-11 bg-slate-50 rounded-2xl flex items-center justify-center shrink-0 group-hover:bg-gold/10 transition-colors duration-300">
-                  <Icon className="w-5 h-5 text-slate-400 group-hover:text-gold transition-colors duration-300" />
+                <div className="h-12 w-12 bg-slate-100 rounded-2xl flex items-center justify-center shrink-0 border border-slate-200 group-hover:bg-navy group-hover:border-navy transition-all duration-300 shadow-sm">
+                  <Icon className="w-6 h-6 text-navy group-hover:text-gold transition-colors duration-300" />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2 mb-1.5">
+                  <div className="flex items-center gap-2 mb-2">
                     <Badge variant={typeVariant[resource.type]} size="sm">{resource.type}</Badge>
                   </div>
-                  <h3 className="font-bold text-navy text-sm mb-1 group-hover:text-gold transition-colors duration-300 truncate">
+                  <h3 className="font-black text-navy text-base mb-1.5 group-hover:text-gold transition-colors duration-300 truncate">
                     {resource.title}
                   </h3>
-                  <p className="text-slate-400 text-xs line-clamp-2 mb-3">{resource.description}</p>
-                  <div className="flex items-center gap-3 text-[10px] text-slate-400 font-medium">
+                  <p className="text-slate-600 font-bold text-xs line-clamp-2 mb-4 leading-relaxed">{resource.description}</p>
+                  <div className="flex items-center gap-3 text-[10px] text-slate-700 font-black uppercase tracking-tight">
                     <span>{creator?.name || 'Unknown'}</span>
-                    <span className="w-1 h-1 bg-slate-300 rounded-full" />
+                    <span className="w-1 h-1 bg-slate-400 rounded-full" />
                     <span>{resource.createdAt.toLocaleDateString()}</span>
                   </div>
                 </div>

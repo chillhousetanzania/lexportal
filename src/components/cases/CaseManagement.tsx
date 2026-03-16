@@ -1,13 +1,15 @@
 import React, { useState, useMemo } from 'react';
 import { useApp } from '../../context/AppContext';
 import { RoleGuard } from '../auth/RoleGuard';
-import { Card, Button, Badge, cn } from '../ui';
+import { Card, Button, Badge, Input, Select } from '../ui';
 import { PageHeader, AccessDenied, EmptyState } from '../shared/PageElements';
 import { ErrorBoundary } from '../shared/ErrorBoundary';
 import { filterCasesByRole } from '../../utils/rbac';
 import { CaseWizard } from '../wizard/CaseWizard';
 import type { CaseRecord, CaseStatus } from '../../types';
-import { Plus, Search, Filter, Calendar, Eye, Briefcase } from 'lucide-react';
+import {
+  Plus, Search, Calendar, Eye, ArrowLeft, Briefcase
+} from 'lucide-react';
 
 const statusVariant = (status: CaseStatus): 'info' | 'success' | 'warning' | 'error' | 'default' => {
   const map: Record<CaseStatus, 'info' | 'success' | 'warning' | 'error' | 'default'> = {
@@ -27,8 +29,8 @@ const CaseDetailView: React.FC<{ caseRecord: CaseRecord; onBack: () => void }> =
 
   return (
     <div className="p-6 lg:p-8 animate-fade-in">
-      <button onClick={onBack} className="text-xs font-bold text-slate-400 uppercase tracking-[0.15em] mb-6 hover:text-gold transition-colors inline-flex items-center gap-2">
-        &larr; Back to Cases
+      <button onClick={onBack} className="text-xs font-black text-slate-600 uppercase tracking-[0.2em] mb-6 hover:text-gold transition-colors inline-flex items-center gap-2 group">
+        <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" /> Back to Cases
       </button>
 
       <div className="gradient-navy rounded-3xl p-6 sm:p-8 mb-6 text-white relative overflow-hidden">
@@ -57,9 +59,11 @@ const CaseDetailView: React.FC<{ caseRecord: CaseRecord; onBack: () => void }> =
         </Card>
       </div>
 
-      <Card className="p-6 mb-6">
-        <h3 className="text-sm font-black text-navy uppercase tracking-tight mb-3">Description</h3>
-        <p className="text-slate-600 text-sm leading-relaxed">{caseRecord.description}</p>
+      <Card className="p-8 mb-6 border-2 border-slate-300/60">
+        <h3 className="text-sm font-black text-navy uppercase tracking-tight mb-4 flex items-center gap-2">
+          <span className="w-1.5 h-4 bg-gold rounded-full" /> Description
+        </h3>
+        <p className="text-navy text-sm font-medium leading-relaxed">{caseRecord.description}</p>
       </Card>
 
       {caseRecord.keyDates.length > 0 && (
@@ -103,9 +107,8 @@ const CaseDetailView: React.FC<{ caseRecord: CaseRecord; onBack: () => void }> =
 };
 
 const CaseManagementContent: React.FC = () => {
-  const { cases, setCases, authState, users, addNotification } = useApp();
+  const { cases, setCases, authState, users, addNotification, selectedCase, setSelectedCase } = useApp();
   const [showWizard, setShowWizard] = useState(false);
-  const [selectedCase, setSelectedCase] = useState<CaseRecord | null>(null);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<CaseStatus | 'all'>('all');
 
@@ -144,7 +147,7 @@ const CaseManagementContent: React.FC = () => {
           id: 'up' + Date.now(),
           timestamp: new Date(),
           author: authState.user!.name,
-          content: 'Case filed via eCase wizard.',
+          content: 'Case filed via LexPortal wizard.',
         },
       ],
     };
@@ -200,36 +203,28 @@ const CaseManagementContent: React.FC = () => {
         )}
       </PageHeader>
 
-      <div className="flex flex-col sm:flex-row gap-4 mb-6 animate-slide-up">
-        <Card className="flex-1 p-3.5">
-          <div className="flex items-center gap-3">
-            <Search className="w-4 h-4 text-slate-300" />
-            <input
-              type="text"
-              placeholder="Search cases..."
-              className="flex-1 text-sm outline-none text-navy bg-transparent placeholder:text-slate-300"
-              value={search}
-              onChange={e => setSearch(e.target.value)}
-            />
-          </div>
-        </Card>
-        <Card className="p-3.5">
-          <div className="flex items-center gap-3">
-            <Filter className="w-4 h-4 text-slate-300" />
-            <select
-              className="text-sm outline-none text-navy bg-transparent font-medium"
-              value={statusFilter}
-              onChange={e => setStatusFilter(e.target.value as CaseStatus | 'all')}
-            >
-              <option value="all">All Status</option>
-              <option value="filed">Filed</option>
-              <option value="active">Active</option>
-              <option value="pending">Pending</option>
-              <option value="closed">Closed</option>
-              <option value="archived">Archived</option>
-            </select>
-          </div>
-        </Card>
+      <div className="flex flex-col sm:flex-row gap-5 mb-8 animate-slide-up">
+        <Input
+          placeholder="Search cases by name or ID..."
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+          className="flex-1"
+          icon={<Search className="w-5 h-5 text-slate-600" />}
+        />
+        <div className="w-full sm:w-52">
+          <Select
+            value={statusFilter}
+            onChange={e => setStatusFilter(e.target.value as CaseStatus | 'all')}
+            options={[
+              { value: 'all', label: 'All Status' },
+              { value: 'filed', label: 'Filed' },
+              { value: 'active', label: 'Active' },
+              { value: 'pending', label: 'Pending' },
+              { value: 'closed', label: 'Closed' },
+              { value: 'archived', label: 'Archived' },
+            ]}
+          />
+        </div>
       </div>
 
       <Card className="overflow-hidden animate-slide-up delay-1">
@@ -277,13 +272,15 @@ const CaseManagementContent: React.FC = () => {
                     <td className="px-6 py-4 text-slate-400 text-xs font-medium">{litigator?.name || '-'}</td>
                     <td className="px-6 py-4 text-slate-400 text-xs font-medium">{caseItem.filedDate.toLocaleDateString()}</td>
                     <td className="px-6 py-4 text-right">
-                      <button
-                        onClick={() => setSelectedCase(caseItem)}
-                        className="p-2 rounded-xl hover:bg-blue-50 text-slate-400 hover:text-blue-600 transition-all duration-200 opacity-0 group-hover:opacity-100"
-                        title="View details"
-                      >
-                        <Eye className="w-4 h-4" />
-                      </button>
+                      <div className="flex items-center justify-end gap-2">
+                        <button
+                          onClick={() => setSelectedCase(caseItem)}
+                          className="p-2.5 rounded-xl bg-slate-100 text-slate-600 hover:bg-gold hover:text-navy transition-all duration-300 shadow-sm border border-slate-200"
+                          title="View Case Details"
+                        >
+                          <Eye className="w-4 h-4" />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 );

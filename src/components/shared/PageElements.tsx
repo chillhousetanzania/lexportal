@@ -48,8 +48,8 @@ export const PageHeader: React.FC<PageHeaderProps> = ({ title, subtitle, childre
           </div>
         )}
         <div>
-          <h1 className="text-xl font-black text-navy tracking-tight">{title}</h1>
-          {subtitle && <p className="text-xs text-slate-400 font-medium mt-1 tracking-wide">{subtitle}</p>}
+          <h1 className="text-2xl font-black text-navy tracking-tight uppercase">{title}</h1>
+          {subtitle && <p className="text-sm text-slate-600 font-bold mt-1 tracking-tight">{subtitle}</p>}
         </div>
       </div>
       {children && <div className="flex items-center gap-3">{children}</div>}
@@ -69,12 +69,12 @@ export const EmptyState: React.FC<EmptyStateProps> = ({ icon, title, description
   return (
     <div className="flex flex-col items-center justify-center py-20 text-center animate-fade-in">
       {icon && (
-        <div className="h-20 w-20 bg-slate-50 rounded-3xl flex items-center justify-center mb-5 shadow-premium">
+        <div className="h-24 w-24 bg-slate-100 rounded-3xl flex items-center justify-center mb-6 border-2 border-slate-200 shadow-premium">
           {icon}
         </div>
       )}
-      <h3 className="text-lg font-bold text-navy mb-2">{title}</h3>
-      <p className="text-slate-400 text-sm max-w-md mb-6 leading-relaxed">{description}</p>
+      <h3 className="text-xl font-black text-navy mb-2 uppercase tracking-tight">{title}</h3>
+      <p className="text-slate-600 font-bold text-sm max-w-md mb-8 leading-relaxed">{description}</p>
       {action}
     </div>
   );

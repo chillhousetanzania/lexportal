@@ -3,8 +3,8 @@ import type { UserProfile, CaseRecord, FinancialRecord, SharedResource } from '.
 export const seedUsers: UserProfile[] = [
   {
     id: 'u1',
-    username: 'admin',
-    email: 'admin@justice.gov.tz',
+    username: 'admin_tz',
+    email: 'admin@lexportal.com',
     name: 'Sarah Admin',
     role: 'admin',
     status: 'active',
@@ -16,8 +16,8 @@ export const seedUsers: UserProfile[] = [
   },
   {
     id: 'u2',
-    username: 'accountant',
-    email: 'accountant@justice.gov.tz',
+    username: 'acc_juma',
+    email: 'accountant@lexportal.com',
     name: 'James Carter',
     role: 'accountant',
     status: 'active',
@@ -29,8 +29,8 @@ export const seedUsers: UserProfile[] = [
   },
   {
     id: 'u3',
-    username: 'litigator',
-    email: 'litigator@justice.gov.tz',
+    username: 'lit_musa',
+    email: 'litigator@lexportal.com',
     name: 'Linda Osei',
     role: 'litigator',
     status: 'active',
@@ -42,12 +42,12 @@ export const seedUsers: UserProfile[] = [
   },
   {
     id: 'u4',
-    username: 'client',
-    email: 'counsel@justice.gov.tz',
+    username: 'adv_kibo',
+    email: 'counsel@lexportal.com',
     name: 'Michael Tetteh',
     role: 'advisory',
     status: 'active',
-    password: 'client123',
+    password: 'adv123',
     canShareDocuments: false,
     createdAt: new Date('2024-04-01'),
     updatedAt: new Date('2024-06-01'),
@@ -175,7 +175,7 @@ export const seedCases: CaseRecord[] = [
     id: 'c106',
     caseNumber: 'LEX-2025-003',
     title: 'Maritime Liability Claim',
-    description: 'Resolved in favor of client. Partial settlement of $50,000 awarded.',
+    description: 'Resolved in favor of client. Partial settlement of TZS 250,000,000 awarded.',
     status: 'closed',
     assignedLitigator: 'u3',
     assignedClients: ['u4'],
@@ -185,7 +185,7 @@ export const seedCases: CaseRecord[] = [
       { label: 'Settlement Date', date: new Date('2025-01-20') },
     ],
     updates: [
-      { id: 'up10', timestamp: new Date('2025-01-20'), author: 'Linda Osei', content: 'Case settled. $50,000 awarded to client.' },
+      { id: 'up10', timestamp: new Date('2025-01-20'), author: 'Linda Osei', content: 'Case settled. TZS 250,000,000 awarded to client.' },
     ],
   },
   {
@@ -223,18 +223,18 @@ export const seedCases: CaseRecord[] = [
 ];
 
 export const seedFinancialRecords: FinancialRecord[] = [
-  { id: 'f1', transactionDate: new Date('2024-10-12'), type: 'revenue', category: 'Legal Fees', amount: 4500, description: 'Estate of Mensah retainer', createdBy: 'u2', createdAt: new Date('2024-10-12') },
-  { id: 'f2', transactionDate: new Date('2024-11-15'), type: 'revenue', category: 'Legal Fees', amount: 3000, description: 'Tetteh v. Realty Corp initial payment', createdBy: 'u2', createdAt: new Date('2024-11-15') },
-  { id: 'f3', transactionDate: new Date('2024-12-10'), type: 'revenue', category: 'Consultation', amount: 7000, description: 'Year-end consultation fees', createdBy: 'u2', createdAt: new Date('2024-12-10') },
-  { id: 'f4', transactionDate: new Date('2025-01-20'), type: 'expense', category: 'Office Rent', amount: 2800, description: 'January office rent payment', createdBy: 'u2', createdAt: new Date('2025-01-20') },
-  { id: 'f5', transactionDate: new Date('2025-02-05'), type: 'revenue', category: 'Legal Fees', amount: 10000, description: 'Civil Rights Litigation retainer', createdBy: 'u2', createdAt: new Date('2025-02-05') },
-  { id: 'f6', transactionDate: new Date('2025-02-15'), type: 'expense', category: 'Staff Salaries', amount: 15000, description: 'February payroll', createdBy: 'u2', createdAt: new Date('2025-02-15') },
-  { id: 'f7', transactionDate: new Date('2025-02-20'), type: 'expense', category: 'Technology', amount: 3200, description: 'Software licenses and cloud services', createdBy: 'u2', createdAt: new Date('2025-02-20') },
-  { id: 'f8', transactionDate: new Date('2025-03-01'), type: 'revenue', category: 'Legal Fees', amount: 5000, description: 'Danquah Trust management fees', createdBy: 'u2', createdAt: new Date('2025-03-01') },
-  { id: 'f9', transactionDate: new Date('2025-03-05'), type: 'revenue', category: 'Settlement', amount: 8500, description: 'Maritime Liability settlement fee', createdBy: 'u2', createdAt: new Date('2025-03-05') },
-  { id: 'f10', transactionDate: new Date('2025-03-10'), type: 'expense', category: 'Office Rent', amount: 2800, description: 'March office rent payment', createdBy: 'u2', createdAt: new Date('2025-03-10') },
-  { id: 'f11', transactionDate: new Date('2025-01-10'), type: 'expense', category: 'Professional Development', amount: 1500, description: 'CLE courses for associates', createdBy: 'u2', createdAt: new Date('2025-01-10') },
-  { id: 'f12', transactionDate: new Date('2024-12-20'), type: 'refund', category: 'Legal Fees', amount: 800, description: 'Overpayment refund for client', createdBy: 'u2', createdAt: new Date('2024-12-20') },
+  { id: 'f1', transactionDate: new Date('2024-10-12'), type: 'revenue', category: 'Legal Fees', amount: 11250000, description: 'Estate of Mensah retainer', createdBy: 'u2', createdAt: new Date('2024-10-12') },
+  { id: 'f2', transactionDate: new Date('2024-11-15'), type: 'revenue', category: 'Legal Fees', amount: 7500000, description: 'Tetteh v. Realty Corp initial payment', createdBy: 'u2', createdAt: new Date('2024-11-15') },
+  { id: 'f3', transactionDate: new Date('2024-12-10'), type: 'revenue', category: 'Consultation', amount: 17500000, description: 'Year-end consultation fees', createdBy: 'u2', createdAt: new Date('2024-12-10') },
+  { id: 'f4', transactionDate: new Date('2025-01-20'), type: 'expense', category: 'Office Rent', amount: 7000000, description: 'January office rent payment', createdBy: 'u2', createdAt: new Date('2025-01-20') },
+  { id: 'f5', transactionDate: new Date('2025-02-05'), type: 'revenue', category: 'Legal Fees', amount: 25000000, description: 'Civil Rights Litigation retainer', createdBy: 'u2', createdAt: new Date('2025-02-05') },
+  { id: 'f6', transactionDate: new Date('2025-02-15'), type: 'expense', category: 'Staff Salaries', amount: 37500000, description: 'February payroll', createdBy: 'u2', createdAt: new Date('2025-02-15') },
+  { id: 'f7', transactionDate: new Date('2025-02-20'), type: 'expense', category: 'Technology', amount: 8000000, description: 'Software licenses and cloud services', createdBy: 'u2', createdAt: new Date('2025-02-20') },
+  { id: 'f8', transactionDate: new Date('2025-03-01'), type: 'revenue', category: 'Legal Fees', amount: 12500000, description: 'Danquah Trust management fees', createdBy: 'u2', createdAt: new Date('2025-03-01') },
+  { id: 'f9', transactionDate: new Date('2025-03-05'), type: 'revenue', category: 'Settlement', amount: 212500000, description: 'Maritime Liability settlement fee', createdBy: 'u2', createdAt: new Date('2025-03-05') },
+  { id: 'f10', transactionDate: new Date('2025-03-10'), type: 'expense', category: 'Office Rent', amount: 7000000, description: 'March office rent payment', createdBy: 'u2', createdAt: new Date('2025-03-10') },
+  { id: 'f11', transactionDate: new Date('2025-01-10'), type: 'expense', category: 'Professional Development', amount: 3750000, description: 'CLE courses for associates', createdBy: 'u2', createdAt: new Date('2025-01-10') },
+  { id: 'f12', transactionDate: new Date('2024-12-20'), type: 'refund', category: 'Legal Fees', amount: 2000000, description: 'Overpayment refund for client', createdBy: 'u2', createdAt: new Date('2024-12-20') },
 ];
 
 export const seedSharedResources: SharedResource[] = [

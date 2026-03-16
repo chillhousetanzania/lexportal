@@ -2,9 +2,8 @@ import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { cn } from '../ui';
 import {
-  Bell, Search, Settings, ChevronDown,
-  Home, Users, DollarSign, BarChart3, Briefcase, FileText,
-  Shield, HelpCircle, LogOut, User, ChevronRight
+  Home, Users, Banknote, BarChart3, Briefcase, FileText, ChevronRight,
+  Search, Bell, HelpCircle, ChevronDown, LogOut, Settings
 } from 'lucide-react';
 
 interface BreadcrumbItem {
@@ -26,7 +25,7 @@ const getBreadcrumbs = (currentPage: string): BreadcrumbItem[] => {
     case 'users':
       return [...base, { label: 'User Management', icon: Users }];
     case 'financials':
-      return [...base, { label: 'Financial Records', icon: DollarSign }];
+      return [...base, { label: 'Financial Records', icon: Banknote }];
     case 'analytics':
       return [...base, { label: 'Analytics', icon: BarChart3 }];
     case 'reports':
@@ -77,8 +76,8 @@ export const Topbar: React.FC = () => {
                   className={cn(
                     'flex items-center space-x-1.5 px-2 py-1 rounded-lg text-sm font-medium transition-all duration-200',
                     index === breadcrumbs.length - 1
-                      ? 'text-navy font-semibold'
-                      : 'text-slate-400 hover:text-slate-600 hover:bg-slate-50'
+                      ? 'text-navy font-black'
+                      : 'text-slate-600 hover:text-navy hover:bg-slate-100'
                   )}
                 >
                   {item.icon && <item.icon className="w-3.5 h-3.5" />}
@@ -93,19 +92,19 @@ export const Topbar: React.FC = () => {
             {/* Search */}
             <form onSubmit={handleSearch} className="hidden md:block">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-300" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-500 shrink-0" />
                 <input
                   type="text"
                   placeholder="Search..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-9 pr-4 py-2 text-sm border border-slate-200/60 rounded-xl bg-slate-50/50 focus:outline-none focus:ring-2 focus:ring-gold/15 focus:border-gold/40 focus:bg-white w-52 transition-all duration-300 placeholder:text-slate-300"
+                  className="pl-9 pr-4 py-2 text-sm border-2 border-slate-400/50 rounded-xl bg-white focus:outline-none focus:ring-4 focus:ring-gold/20 focus:border-gold focus:bg-white w-64 transition-all duration-300 placeholder:text-slate-500 font-black shadow-sm"
                 />
               </div>
             </form>
 
             {/* Help */}
-            <button className="p-2 text-slate-400 hover:text-navy hover:bg-slate-50 rounded-xl transition-all duration-200">
+            <button className="p-2 text-slate-500 hover:text-navy hover:bg-slate-100 rounded-xl transition-all duration-200">
               <HelpCircle className="w-[18px] h-[18px]" />
             </button>
 
@@ -113,7 +112,7 @@ export const Topbar: React.FC = () => {
             <div className="relative">
               <button
                 onClick={() => { setShowNotifications(!showNotifications); setShowProfile(false); }}
-                className="p-2 text-slate-400 hover:text-navy hover:bg-slate-50 rounded-xl transition-all duration-200 relative"
+                className="p-2 text-slate-500 hover:text-navy hover:bg-slate-100 rounded-xl transition-all duration-200 relative"
               >
                 <Bell className="w-[18px] h-[18px]" />
                 {unreadCount > 0 && (
@@ -171,18 +170,18 @@ export const Topbar: React.FC = () => {
                   <span className="text-xs font-extrabold text-navy-dark">{user?.name?.[0]}</span>
                 </div>
                 <div className="hidden sm:block text-left">
-                  <div className="text-sm font-semibold text-navy leading-none">{user?.name}</div>
-                  <div className="text-[10px] text-slate-400 capitalize mt-0.5 font-medium">{user?.role}</div>
+                  <div className="text-sm font-bold text-navy leading-none">{user?.name}</div>
+                  <div className="text-[10px] text-slate-500 capitalize mt-1 font-bold tracking-tight">{user?.role}</div>
                 </div>
-                <ChevronDown className="w-3.5 h-3.5 text-slate-400 hidden sm:block" />
+                <ChevronDown className="w-3.5 h-3.5 text-slate-500 hidden sm:block" />
               </button>
 
               {showProfile && (
                 <div className="absolute right-0 mt-2 w-56 bg-white rounded-2xl shadow-premium-lg border border-slate-100/60 z-50 animate-scale-in overflow-hidden">
                   <div className="p-4 gradient-navy text-white">
-                    <p className="text-sm font-bold">{user?.name}</p>
-                    <p className="text-xs text-slate-400 mt-0.5">{user?.email}</p>
-                    <span className="inline-block mt-2 text-[10px] font-bold text-gold bg-gold/10 px-2 py-0.5 rounded-full capitalize">{user?.role}</span>
+                    <p className="text-sm font-black">{user?.name}</p>
+                    <p className="text-xs text-slate-300 mt-1 font-bold">{user?.email}</p>
+                    <span className="inline-block mt-3 text-[10px] font-black text-navy bg-gold px-3 py-1 rounded-full capitalize shadow-gold"> {user?.role}</span>
                   </div>
                   <div className="py-1.5">
                     <button className="w-full px-4 py-2.5 text-sm text-left text-slate-600 hover:bg-slate-50 flex items-center space-x-2.5 transition-colors duration-200">

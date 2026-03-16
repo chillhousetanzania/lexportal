@@ -1,16 +1,15 @@
 import React, { useMemo, useState } from 'react';
 import { useApp } from '../../context/AppContext';
-import { Card, Button, Badge } from '../ui';
+import { Card, Button } from '../ui';
 import { DataGrid } from '../ui/DataGrid';
-import { PageHeader } from '../shared/PageElements';
 import { ErrorBoundary } from '../shared/ErrorBoundary';
 import { filterCasesByRole } from '../../utils/rbac';
 import { cn } from '../ui';
 import {
   Users, Briefcase, FileText, TrendingUp, Plus,
-  Clock, Activity, ArrowRight, DollarSign, TrendingDown, BarChart3, Sparkles
+  Clock, Activity, ArrowRight, Banknote, TrendingDown, BarChart3, Sparkles
 } from 'lucide-react';
-import type { UserRole, CaseStatus } from '../../types';
+import type { UserRole, CaseStatus, CaseRecord } from '../../types';
 
 // Status pill component
 const StatusPill: React.FC<{ status: CaseStatus }> = ({ status }) => {
@@ -58,8 +57,7 @@ const StatsCard: React.FC<{
   iconBg: string;
   iconColor: string;
   onClick?: () => void;
-  delay?: number;
-}> = ({ title, value, subtitle, icon: Icon, iconBg, iconColor, onClick, delay = 0 }) => (
+}> = ({ title, value, subtitle, icon: Icon, iconBg, iconColor, onClick }) => (
   <Card
     className={cn(
       'p-6 cursor-pointer group animate-slide-up',
@@ -93,7 +91,7 @@ const WelcomeBanner: React.FC<{ name: string; role: string }> = ({ name, role })
           <span className="text-[10px] text-gold font-bold uppercase tracking-[0.2em]">Welcome back</span>
         </div>
         <h2 className="text-2xl sm:text-3xl font-black tracking-tight">{name}</h2>
-        <p className="text-slate-400 text-sm mt-1 capitalize">{role} — Judicial Management System</p>
+        <p className="text-slate-400 text-sm mt-1 capitalize">{role} — LexPortal Legal Management</p>
       </div>
       <div className="hidden sm:block">
         <div className="text-right">
@@ -106,7 +104,7 @@ const WelcomeBanner: React.FC<{ name: string; role: string }> = ({ name, role })
 
 // ===== Admin Dashboard =====
 const EnhancedAdminDashboard: React.FC = () => {
-  const { users, cases, financialRecords, sharedResources, setCurrentPage, authState } = useApp();
+  const { users, cases, financialRecords, sharedResources, setCurrentPage, authState, setSelectedCase } = useApp();
   const [isLoading, setIsLoading] = useState(true);
 
   React.useEffect(() => {
@@ -203,8 +201,8 @@ const EnhancedAdminDashboard: React.FC = () => {
         />
         <StatsCard
           title="Revenue"
-          value={`$${stats.revenue.toLocaleString()}`}
-          subtitle={`Net: $${stats.netIncome.toLocaleString()}`}
+          value={`TZS ${stats.revenue.toLocaleString()}`}
+          subtitle={`Net: TZS ${stats.netIncome.toLocaleString()}`}
           icon={TrendingUp}
           iconBg="bg-emerald-50"
           iconColor="text-emerald-500"
@@ -232,11 +230,12 @@ const EnhancedAdminDashboard: React.FC = () => {
             View All <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
           </button>
         </div>
-        <DataGrid
+        <DataGrid<CaseRecord>
           data={cases.slice(0, 10)}
           columns={caseColumns}
-          onRowClick={(selectedCase) => {
-            console.log('Case selected:', selectedCase);
+          onRowClick={(c: CaseRecord) => {
+            setSelectedCase(c);
+            setCurrentPage('cases');
           }}
         />
       </div>
@@ -246,7 +245,7 @@ const EnhancedAdminDashboard: React.FC = () => {
 
 // ===== Accountant Dashboard =====
 const EnhancedAccountantDashboard: React.FC = () => {
-  const { financialRecords, sharedResources, setCurrentPage, authState } = useApp();
+  const { financialRecords, setCurrentPage, authState } = useApp();
 
   const stats = useMemo(() => {
     const revenue = financialRecords.filter(r => r.type === 'revenue').reduce((s, r) => s + r.amount, 0);
@@ -269,7 +268,7 @@ const EnhancedAccountantDashboard: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         <StatsCard
           title="Total Revenue"
-          value={`$${stats.totalRevenue.toLocaleString()}`}
+          value={`TZS ${stats.totalRevenue.toLocaleString()}`}
           icon={TrendingUp}
           iconBg="bg-emerald-50"
           iconColor="text-emerald-500"
@@ -277,7 +276,7 @@ const EnhancedAccountantDashboard: React.FC = () => {
         />
         <StatsCard
           title="Total Expenses"
-          value={`$${stats.totalExpenses.toLocaleString()}`}
+          value={`TZS ${stats.totalExpenses.toLocaleString()}`}
           icon={TrendingDown}
           iconBg="bg-red-50"
           iconColor="text-red-500"
@@ -285,8 +284,8 @@ const EnhancedAccountantDashboard: React.FC = () => {
         />
         <StatsCard
           title="Net Income"
-          value={`$${stats.netIncome.toLocaleString()}`}
-          icon={DollarSign}
+          value={`TZS ${stats.netIncome.toLocaleString()}`}
+          icon={Banknote}
           iconBg="bg-gold/10"
           iconColor="text-gold"
           onClick={() => setCurrentPage('analytics')}
@@ -343,7 +342,7 @@ const EnhancedAccountantDashboard: React.FC = () => {
                   )}>
                     {record.type === 'revenue' ? <TrendingUp className="w-5 h-5 text-emerald-500" /> :
                      record.type === 'expense' ? <TrendingDown className="w-5 h-5 text-red-500" /> :
-                     <DollarSign className="w-5 h-5 text-amber-500" />}
+                     <Banknote className="w-5 h-5 text-amber-500" />}
                   </div>
                   <div>
                     <p className="text-sm font-semibold text-navy">{record.category}</p>
@@ -354,7 +353,7 @@ const EnhancedAccountantDashboard: React.FC = () => {
                   'font-bold text-sm',
                   record.type === 'revenue' ? 'text-emerald-600' : record.type === 'expense' ? 'text-red-500' : 'text-slate-600'
                 )}>
-                  {record.type === 'expense' || record.type === 'refund' ? '-' : '+'}${record.amount.toLocaleString()}
+                  {record.type === 'expense' || record.type === 'refund' ? '-' : '+'}TZS {record.amount.toLocaleString()}
                 </span>
               </div>
             ))}
@@ -367,7 +366,7 @@ const EnhancedAccountantDashboard: React.FC = () => {
 
 // ===== Litigator Dashboard =====
 const EnhancedLitigatorDashboard: React.FC = () => {
-  const { cases, authState, setCurrentPage } = useApp();
+  const { cases, authState, setCurrentPage, setSelectedCase } = useApp();
   const userId = authState.user!.id;
 
   const myCases = useMemo(() => filterCasesByRole(cases, 'litigator', userId), [cases, userId]);
@@ -431,6 +430,7 @@ const EnhancedLitigatorDashboard: React.FC = () => {
           icon={Activity}
           iconBg="bg-emerald-50"
           iconColor="text-emerald-500"
+          onClick={() => setCurrentPage('cases')}
         />
         <StatsCard
           title="Filed"
@@ -438,6 +438,7 @@ const EnhancedLitigatorDashboard: React.FC = () => {
           icon={FileText}
           iconBg="bg-blue-50"
           iconColor="text-blue-500"
+          onClick={() => setCurrentPage('cases')}
         />
         <StatsCard
           title="Pending"
@@ -445,6 +446,7 @@ const EnhancedLitigatorDashboard: React.FC = () => {
           icon={Clock}
           iconBg="bg-amber-50"
           iconColor="text-amber-500"
+          onClick={() => setCurrentPage('cases')}
         />
       </div>
 
@@ -456,11 +458,12 @@ const EnhancedLitigatorDashboard: React.FC = () => {
             New Case
           </Button>
         </div>
-        <DataGrid
+        <DataGrid<CaseRecord>
           data={myCases}
           columns={caseColumns}
-          onRowClick={(selectedCase) => {
-            console.log('Case selected:', selectedCase);
+          onRowClick={(c: CaseRecord) => {
+            setSelectedCase(c);
+            setCurrentPage('cases');
           }}
         />
       </div>
@@ -510,6 +513,7 @@ const EnhancedAdvisoryDashboard: React.FC = () => {
           icon={Clock}
           iconBg="bg-amber-50"
           iconColor="text-amber-500"
+          onClick={() => setCurrentPage('my-cases')}
         />
         <StatsCard
           title="Documents"

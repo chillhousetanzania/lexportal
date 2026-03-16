@@ -5,7 +5,7 @@ import { Card, Button, Badge, Input, Select, cn } from '../ui';
 import { PageHeader, AccessDenied, EmptyState } from '../shared/PageElements';
 import { ErrorBoundary } from '../shared/ErrorBoundary';
 import type { FinancialRecord, TransactionType } from '../../types';
-import { Plus, Search, Filter, DollarSign, TrendingUp, TrendingDown } from 'lucide-react';
+import { Plus, Search, Banknote, TrendingUp, TrendingDown } from 'lucide-react';
 
 const typeVariant = (type: TransactionType): 'success' | 'error' | 'warning' | 'info' => {
   const map: Record<TransactionType, 'success' | 'error' | 'warning' | 'info'> = {
@@ -53,7 +53,7 @@ const TransactionForm: React.FC<{
             { value: 'adjustment', label: 'Adjustment' },
           ]} />
           <Input label="Category" required placeholder="e.g. Legal Fees, Office Rent" value={form.category} onChange={e => setForm({ ...form, category: e.target.value })} />
-          <Input label="Amount ($)" type="number" required placeholder="0.00" value={form.amount} onChange={e => setForm({ ...form, amount: e.target.value })} />
+          <Input label="Amount (TZS)" type="number" required placeholder="0.00" value={form.amount} onChange={e => setForm({ ...form, amount: e.target.value })} />
         </div>
         <Input label="Description" required placeholder="Brief description of the transaction" value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} />
         <div className="flex justify-end gap-3 pt-4">
@@ -123,7 +123,7 @@ const FinancialRecordsContent: React.FC = () => {
 
   return (
     <div className="p-6 lg:p-8">
-      <PageHeader title="Financial Records" subtitle="Manage transactions and records" icon={<DollarSign className="w-6 h-6 text-white" />}>
+      <PageHeader title="Financial Records" subtitle="Manage transactions and records" icon={<Banknote className="w-6 h-6 text-white" />}>
         <Button variant="accent" onClick={() => setShowForm(true)}>
           <Plus className="w-4 h-4" /> New Transaction
         </Button>
@@ -135,8 +135,8 @@ const FinancialRecordsContent: React.FC = () => {
           <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-emerald-400 to-emerald-500 rounded-r" />
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.15em]">Total Revenue</p>
-              <p className="text-2xl font-black text-navy mt-1">${metrics.totalRevenue.toLocaleString()}</p>
+              <p className="text-[10px] font-black text-slate-600 uppercase tracking-[0.2em]">Total Revenue</p>
+              <p className="text-2xl font-black text-navy mt-1">TZS {metrics.totalRevenue.toLocaleString()}</p>
             </div>
             <div className="p-2.5 bg-emerald-50 rounded-2xl group-hover:scale-110 transition-transform">
               <TrendingUp className="w-6 h-6 text-emerald-500" />
@@ -147,8 +147,8 @@ const FinancialRecordsContent: React.FC = () => {
           <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-red-400 to-red-500 rounded-r" />
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.15em]">Total Expenses</p>
-              <p className="text-2xl font-black text-navy mt-1">${metrics.totalExpenses.toLocaleString()}</p>
+              <p className="text-[10px] font-black text-slate-600 uppercase tracking-[0.2em]">Total Expenses</p>
+              <p className="text-2xl font-black text-navy mt-1">TZS {metrics.totalExpenses.toLocaleString()}</p>
             </div>
             <div className="p-2.5 bg-red-50 rounded-2xl group-hover:scale-110 transition-transform">
               <TrendingDown className="w-6 h-6 text-red-500" />
@@ -159,11 +159,11 @@ const FinancialRecordsContent: React.FC = () => {
           <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-gold to-gold-dark rounded-r" />
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.15em]">Net Income</p>
-              <p className="text-2xl font-black text-navy mt-1">${metrics.netIncome.toLocaleString()}</p>
+              <p className="text-[10px] font-black text-slate-600 uppercase tracking-[0.2em]">Net Income</p>
+              <p className="text-2xl font-black text-navy mt-1">TZS {metrics.netIncome.toLocaleString()}</p>
             </div>
             <div className="p-2.5 bg-gold/10 rounded-2xl group-hover:scale-110 transition-transform">
-              <DollarSign className="w-6 h-6 text-gold" />
+              <Banknote className="w-6 h-6 text-gold" />
             </div>
           </div>
         </Card>
@@ -171,7 +171,7 @@ const FinancialRecordsContent: React.FC = () => {
           <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-blue-400 to-blue-500 rounded-r" />
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.15em]">Transactions</p>
+              <p className="text-[10px] font-black text-slate-600 uppercase tracking-[0.2em]">Transactions</p>
               <p className="text-2xl font-black text-navy mt-1">{metrics.totalRecords}</p>
             </div>
           </div>
@@ -179,35 +179,27 @@ const FinancialRecordsContent: React.FC = () => {
       </div>
 
       {/* Filters */}
-      <div className="flex flex-col sm:flex-row gap-4 mb-6 animate-slide-up delay-1">
-        <Card className="flex-1 p-3.5">
-          <div className="flex items-center gap-3">
-            <Search className="w-4 h-4 text-slate-300" />
-            <input
-              type="text"
-              placeholder="Search transactions..."
-              className="flex-1 text-sm outline-none text-navy bg-transparent placeholder:text-slate-300"
-              value={search}
-              onChange={e => setSearch(e.target.value)}
-            />
-          </div>
-        </Card>
-        <Card className="p-3.5">
-          <div className="flex items-center gap-3">
-            <Filter className="w-4 h-4 text-slate-300" />
-            <select
-              className="text-sm outline-none text-navy bg-transparent font-medium"
-              value={typeFilter}
-              onChange={e => setTypeFilter(e.target.value as TransactionType | 'all')}
-            >
-              <option value="all">All Types</option>
-              <option value="revenue">Revenue</option>
-              <option value="expense">Expense</option>
-              <option value="refund">Refund</option>
-              <option value="adjustment">Adjustment</option>
-            </select>
-          </div>
-        </Card>
+      <div className="flex flex-col sm:flex-row gap-5 mb-8 animate-slide-up delay-1">
+        <Input
+          placeholder="Search transactions..."
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+          className="flex-1"
+          icon={<Search className="w-5 h-5 text-slate-600" />}
+        />
+        <div className="w-full sm:w-56">
+          <Select
+            value={typeFilter}
+            onChange={e => setTypeFilter(e.target.value as TransactionType | 'all')}
+            options={[
+              { value: 'all', label: 'All Types' },
+              { value: 'revenue', label: 'Revenue' },
+              { value: 'expense', label: 'Expense' },
+              { value: 'refund', label: 'Refund' },
+              { value: 'adjustment', label: 'Adjustment' },
+            ]}
+          />
+        </div>
       </div>
 
       {/* Table */}
@@ -226,19 +218,19 @@ const FinancialRecordsContent: React.FC = () => {
             <tbody className="divide-y divide-slate-100/60">
               {filtered.map(record => (
                 <tr key={record.id} className="hover:bg-slate-50/50 transition-all duration-200">
-                  <td className="px-6 py-4 text-xs text-slate-400 font-medium">
+                  <td className="px-6 py-4 text-xs text-slate-600 font-black">
                     {record.transactionDate.toLocaleDateString()}
                   </td>
                   <td className="px-6 py-4">
                     <Badge variant={typeVariant(record.type)} size="sm">{record.type}</Badge>
                   </td>
-                  <td className="px-6 py-4 text-sm font-semibold text-navy">{record.category}</td>
-                  <td className="px-6 py-4 text-xs text-slate-400 truncate max-w-[200px]">{record.description}</td>
+                  <td className="px-6 py-4 text-sm font-black text-navy">{record.category}</td>
+                  <td className="px-6 py-4 text-xs text-slate-600 font-bold truncate max-w-[200px]">{record.description}</td>
                   <td className={cn(
-                    'px-6 py-4 text-right font-bold text-sm',
-                    record.type === 'revenue' ? 'text-emerald-600' : record.type === 'expense' ? 'text-red-500' : 'text-slate-600'
+                    'px-6 py-4 text-right font-black text-sm',
+                    record.type === 'revenue' ? 'text-emerald-700' : record.type === 'expense' ? 'text-red-600' : 'text-slate-700'
                   )}>
-                    {record.type === 'expense' || record.type === 'refund' ? '-' : '+'}${record.amount.toLocaleString()}
+                    {record.type === 'expense' || record.type === 'refund' ? '-' : '+'}TZS {record.amount.toLocaleString()}
                   </td>
                 </tr>
               ))}
