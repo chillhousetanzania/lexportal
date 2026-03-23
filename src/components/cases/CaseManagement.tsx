@@ -8,8 +8,11 @@ import { filterCasesByRole } from '../../utils/rbac';
 import { CaseWizard } from '../wizard/CaseWizard';
 import type { CaseRecord, CaseStatus } from '../../types';
 import {
-  Plus, Search, Calendar, Eye, ArrowLeft, Briefcase
+  Plus, Search, Calendar, Eye, ArrowLeft, Briefcase, Edit2, Scale, Clock
 } from 'lucide-react';
+import { EditCaseModal } from './EditCaseModal';
+import { CourtSessionModal } from './CourtSessionModal';
+import type { CourtSessionRecord } from '../../types';
 
 const statusVariant = (status: CaseStatus): 'info' | 'success' | 'warning' | 'error' | 'default' => {
   const map: Record<CaseStatus, 'info' | 'success' | 'warning' | 'error' | 'default'> = {
@@ -22,23 +25,38 @@ const statusVariant = (status: CaseStatus): 'info' | 'success' | 'warning' | 'er
   return map[status];
 };
 
-const CaseDetailView: React.FC<{ caseRecord: CaseRecord; onBack: () => void }> = ({ caseRecord, onBack }) => {
-  const { users } = useApp();
+const CaseDetailView: React.FC<{ caseRecord: CaseRecord; onBack: () => void; onEdit?: () => void; onRecordSession?: () => void }> = ({ caseRecord, onBack, onEdit, onRecordSession }) => {
+  const { users, authState } = useApp();
   const litigator = users.find(u => u.id === caseRecord.assignedLitigator);
   const clients = users.filter(u => caseRecord.assignedClients.includes(u.id));
+  const role = authState.user?.role;
 
   return (
     <div className="p-6 lg:p-8 animate-fade-in">
-      <button onClick={onBack} className="text-xs font-black text-slate-600 uppercase tracking-[0.2em] mb-6 hover:text-gold transition-colors inline-flex items-center gap-2 group">
-        <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" /> Back to Cases
-      </button>
+      <div className="flex items-center justify-between mb-6">
+        <button onClick={onBack} className="text-xs font-black text-slate-600 uppercase tracking-[0.2em] hover:text-gold transition-colors inline-flex items-center gap-2 group">
+          <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" /> Back to Cases
+        </button>
+        <div className="flex items-center gap-3">
+          {onRecordSession && (role === 'admin' || role === 'litigator') && (
+            <Button variant="outline" onClick={onRecordSession} className="text-xs h-9 px-4 flex items-center gap-2 shadow-sm rounded-xl border-gold/50 text-navy hover:bg-gold/10">
+              <Scale className="w-3.5 h-3.5" /> Record Session
+            </Button>
+          )}
+          {onEdit && (role === 'admin' || role === 'litigator') && (
+            <Button variant="accent" onClick={onEdit} className="text-xs h-9 px-4 flex items-center gap-2 shadow-sm rounded-xl">
+              <Edit2 className="w-3.5 h-3.5" /> Edit Case
+            </Button>
+          )}
+        </div>
+      </div>
 
       <div className="gradient-navy rounded-3xl p-6 sm:p-8 mb-6 text-white relative overflow-hidden">
         <div className="absolute inset-0 bg-grid-pattern opacity-30" />
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <p className="text-gold text-[10px] font-bold uppercase tracking-[0.2em] mb-1">{caseRecord.caseNumber}</p>
-            <h2 className="text-2xl font-black tracking-tight">{caseRecord.title}</h2>
+            <h2 className="text-2xl font-black tracking-tight text-white">{caseRecord.title}</h2>
           </div>
           <Badge variant={statusVariant(caseRecord.status)} size="lg">{caseRecord.status}</Badge>
         </div>
@@ -66,6 +84,69 @@ const CaseDetailView: React.FC<{ caseRecord: CaseRecord; onBack: () => void }> =
         <p className="text-navy text-sm font-medium leading-relaxed">{caseRecord.description}</p>
       </Card>
 
+      {caseRecord.plaintiffs && caseRecord.plaintiffs.length > 0 && (
+        <Card className="p-6 mb-6">
+          <h3 className="text-sm font-black text-navy uppercase tracking-tight mb-4">Plaintiffs</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {caseRecord.plaintiffs.map((p) => (
+              <div key={p.id} className="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                <div className="flex items-center justify-between mb-2">
+                  <h4 className="font-bold text-navy">{p.name}</h4>
+                  <Badge variant={p.type === 'organization' ? 'warning' : 'info'} size="sm">{p.type}</Badge>
+                </div>
+                <div className="space-y-1 text-xs text-slate-500">
+                  <p><span className="font-semibold text-slate-700">Email:</span> {p.email}</p>
+                  <p><span className="font-semibold text-slate-700">Phone:</span> {p.phone}</p>
+                  <p><span className="font-semibold text-slate-700">ID:</span> {p.idNumber}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </Card>
+      )}
+
+      {caseRecord.defendants && caseRecord.defendants.length > 0 && (
+        <Card className="p-6 mb-6">
+          <h3 className="text-sm font-black text-navy uppercase tracking-tight mb-4">Defendants</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {caseRecord.defendants.map((d) => (
+              <div key={d.id} className="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                <div className="flex items-center justify-between mb-2">
+                  <h4 className="font-bold text-navy">{d.name}</h4>
+                  <Badge variant={d.type === 'organization' ? 'warning' : 'info'} size="sm">{d.type}</Badge>
+                </div>
+                <div className="space-y-1 text-xs text-slate-500">
+                  <p><span className="font-semibold text-slate-700">Email:</span> {d.email}</p>
+                  <p><span className="font-semibold text-slate-700">Phone:</span> {d.phone}</p>
+                  <p><span className="font-semibold text-slate-700">ID:</span> {d.idNumber}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </Card>
+      )}
+
+      {caseRecord.attachments && caseRecord.attachments.length > 0 && (
+        <Card className="p-6 mb-6">
+          <h3 className="text-sm font-black text-navy uppercase tracking-tight mb-4">Attachments</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {caseRecord.attachments.map((a) => (
+              <div key={a.id} className="flex items-center gap-3 bg-slate-50 p-3 rounded-lg border border-slate-200">
+                <div className="w-10 h-10 bg-slate-200 rounded-lg flex items-center justify-center shrink-0">
+                  <span className="text-xs font-bold text-slate-600">
+                    {a.type.split('/')[1]?.toUpperCase().substring(0, 3) || 'FILE'}
+                  </span>
+                </div>
+                <div className="min-w-0">
+                  <p className="font-semibold text-xs text-navy truncate">{a.name}</p>
+                  <p className="text-[10px] text-slate-500">{(a.size / 1024 / 1024).toFixed(2)} MB</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </Card>
+      )}
+
       {caseRecord.keyDates.length > 0 && (
         <Card className="p-6 mb-6">
           <h3 className="text-sm font-black text-navy uppercase tracking-tight mb-4">Key Dates</h3>
@@ -78,6 +159,58 @@ const CaseDetailView: React.FC<{ caseRecord: CaseRecord; onBack: () => void }> =
                 <div>
                   <p className="font-bold text-navy text-sm">{kd.label}</p>
                   <p className="text-slate-400 text-xs mt-0.5">{new Date(kd.date).toLocaleDateString()}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </Card>
+      )}
+
+      {caseRecord.courtSessions && caseRecord.courtSessions.length > 0 && (
+        <Card className="p-6 mb-6">
+          <h3 className="text-sm font-black text-navy uppercase tracking-tight mb-4 flex items-center gap-2">
+            <Scale className="w-4 h-4 text-gold" /> Court Sessions
+          </h3>
+          <div className="space-y-4">
+            {caseRecord.courtSessions.map(session => (
+              <div key={session.id} className="bg-slate-50 p-5 rounded-2xl border border-slate-200">
+                <div className="flex items-center justify-between mb-4 border-b border-slate-200 pb-3">
+                  <div>
+                    <h4 className="font-bold text-navy text-sm">Hon. {session.honorable}</h4>
+                    <p className="text-xs text-slate-500">Clerk: {session.courtClerk || 'N/A'}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-semibold text-navy text-sm">{session.tarehe}</p>
+                    <p className="text-xs text-slate-500 flex items-center justify-end gap-1">
+                      <Clock className="w-3 h-3" /> {session.muda}
+                    </p>
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 text-xs">
+                  <div>
+                    <p className="font-bold text-slate-400 uppercase mb-1 text-[10px] tracking-wider">Party Role</p>
+                    <Badge variant="warning">{session.clientRole}</Badge>
+                  </div>
+                  <div>
+                    <p className="font-bold text-slate-400 uppercase mb-1 text-[10px] tracking-wider">Respondents / Judgement Debtors</p>
+                    <p className="font-medium text-navy">{session.respondents.join(', ') || 'N/A'}</p>
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  {session.note && (
+                    <div className="bg-white p-3 rounded-xl border border-slate-100 shadow-sm">
+                      <p className="font-bold text-slate-400 uppercase mb-1 text-[9px] tracking-widest"><span className="inline-block w-1.5 h-1.5 rounded-full bg-blue-500 mr-1" />Session Notes</p>
+                      <p className="text-xs text-slate-600 whitespace-pre-wrap">{session.note}</p>
+                    </div>
+                  )}
+                  {session.order && (
+                    <div className="bg-white p-3 rounded-xl border border-slate-100 shadow-sm border-l-2 border-l-amber-500">
+                      <p className="font-bold text-slate-400 uppercase mb-1 text-[9px] tracking-widest"><span className="inline-block w-1.5 h-1.5 rounded-full bg-amber-500 mr-1" />Court Order</p>
+                      <p className="text-xs font-semibold text-navy whitespace-pre-wrap">{session.order}</p>
+                    </div>
+                  )}
                 </div>
               </div>
             ))}
@@ -109,6 +242,8 @@ const CaseDetailView: React.FC<{ caseRecord: CaseRecord; onBack: () => void }> =
 const CaseManagementContent: React.FC = () => {
   const { cases, setCases, authState, users, addNotification, selectedCase, setSelectedCase } = useApp();
   const [showWizard, setShowWizard] = useState(false);
+  const [editingCase, setEditingCase] = useState<CaseRecord | null>(null);
+  const [recordingSessionCase, setRecordingSessionCase] = useState<CaseRecord | null>(null);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<CaseStatus | 'all'>('all');
 
@@ -129,6 +264,10 @@ const CaseManagementContent: React.FC = () => {
 
   const handleWizardComplete = (wizardData: Record<string, any>) => {
     const caseDetails = wizardData['case-details'] || {};
+    const plaintiffs = wizardData['plaintiff']?.plaintiffs || [];
+    const defendants = wizardData['defendant']?.defendants || [];
+    const attachments = wizardData['attachments']?.attachments || [];
+    
     const caseNumber = `LEX-${new Date().getFullYear()}-${String(cases.length + 1).padStart(3, '0')}`;
 
     const newCase: CaseRecord = {
@@ -150,6 +289,9 @@ const CaseManagementContent: React.FC = () => {
           content: 'Case filed via LexPortal wizard.',
         },
       ],
+      plaintiffs,
+      defendants,
+      attachments,
     };
 
     setCases(prev => [newCase, ...prev]);
@@ -180,8 +322,84 @@ const CaseManagementContent: React.FC = () => {
     addNotification('success', 'Case status updated.');
   };
 
+  const handleEditSave = (updatedCase: CaseRecord) => {
+    setCases(prev => prev.map(c => c.id === updatedCase.id ? {
+      ...updatedCase,
+      lastUpdated: new Date(),
+      updates: [
+        ...c.updates,
+        {
+          id: 'up' + Date.now(),
+          timestamp: new Date(),
+          author: authState.user!.name,
+          content: 'Case details updated.',
+        }
+      ]
+    } : c));
+    setEditingCase(null);
+    addNotification('success', 'Case details updated successfully.');
+  };
+
+  const handleRecordSession = (sessionData: CourtSessionRecord) => {
+    if (!recordingSessionCase) return;
+    
+    setCases(prev => prev.map(c => {
+      if (c.id === recordingSessionCase.id) {
+        return {
+          ...c,
+          courtSessions: [...(c.courtSessions || []), sessionData],
+          lastUpdated: new Date(),
+          updates: [
+            ...c.updates,
+            {
+              id: 'up' + Date.now(),
+              timestamp: new Date(),
+              author: authState.user!.name,
+              content: `Recorded new court session before Hon. ${sessionData.honorable || 'Judge'}.`,
+            }
+          ]
+        };
+      }
+      return c;
+    }));
+    
+    setRecordingSessionCase(null);
+    addNotification('success', 'Court session recorded successfully.');
+    
+    // Update the selected case so the UI refreshes immediately
+    setSelectedCase(prev => prev ? { 
+      ...prev, 
+      courtSessions: [...(prev.courtSessions || []), sessionData] 
+    } : null);
+  };
+
   if (selectedCase) {
-    return <CaseDetailView caseRecord={selectedCase} onBack={() => setSelectedCase(null)} />;
+    return (
+      <>
+        <CaseDetailView 
+          caseRecord={selectedCase} 
+          onBack={() => setSelectedCase(null)} 
+          onEdit={() => setEditingCase(selectedCase)}
+          onRecordSession={() => setRecordingSessionCase(selectedCase)}
+        />
+        {editingCase && (
+          <EditCaseModal
+            initialCase={editingCase}
+            onSave={(updatedCase) => {
+              handleEditSave(updatedCase);
+              setSelectedCase(updatedCase); // Update the view with the new data
+            }}
+            onClose={() => setEditingCase(null)}
+          />
+        )}
+        {recordingSessionCase && (
+          <CourtSessionModal
+            onSave={handleRecordSession}
+            onClose={() => setRecordingSessionCase(null)}
+          />
+        )}
+      </>
+    );
   }
 
   if (showWizard) {
@@ -280,6 +498,15 @@ const CaseManagementContent: React.FC = () => {
                         >
                           <Eye className="w-4 h-4" />
                         </button>
+                        {(role === 'admin' || role === 'litigator') && (
+                          <button
+                            onClick={() => setEditingCase(caseItem)}
+                            className="p-2.5 rounded-xl bg-slate-100 text-slate-600 hover:bg-gold hover:text-navy transition-all duration-300 shadow-sm border border-slate-200"
+                            title="Edit Case"
+                          >
+                            <Edit2 className="w-4 h-4" />
+                          </button>
+                        )}
                       </div>
                     </td>
                   </tr>
@@ -292,6 +519,14 @@ const CaseManagementContent: React.FC = () => {
           <EmptyState title="No cases found" description="No cases match your current filters." />
         )}
       </Card>
+
+      {editingCase && (
+        <EditCaseModal
+          initialCase={editingCase}
+          onSave={handleEditSave}
+          onClose={() => setEditingCase(null)}
+        />
+      )}
     </div>
   );
 };

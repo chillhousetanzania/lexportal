@@ -55,7 +55,7 @@ const CaseDetailPanel: React.FC<{ caseRecord: CaseRecord }> = ({ caseRecord }) =
         <div className="absolute inset-0 bg-grid-pattern opacity-30" />
         <div className="relative z-10">
           <p className="text-gold text-[10px] font-bold uppercase tracking-[0.2em] mb-1">{caseRecord.caseNumber}</p>
-          <h2 className="text-lg font-black mb-2 tracking-tight">{caseRecord.title}</h2>
+          <h2 className="text-lg font-black mb-2 tracking-tight text-white">{caseRecord.title}</h2>
           <Badge variant={statusVariant(caseRecord.status)} size="md">{caseRecord.status}</Badge>
         </div>
       </div>
@@ -74,6 +74,65 @@ const CaseDetailPanel: React.FC<{ caseRecord: CaseRecord }> = ({ caseRecord }) =
           </div>
         </div>
       </Card>
+
+      {caseRecord.plaintiffs && caseRecord.plaintiffs.length > 0 && (
+        <Card className="p-5">
+          <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.15em] mb-3">Plaintiffs</h4>
+          <div className="grid gap-3">
+            {caseRecord.plaintiffs.map((p) => (
+              <div key={p.id} className="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                <div className="flex items-center justify-between mb-1">
+                  <span className="font-bold text-navy text-xs">{p.name}</span>
+                  <Badge variant={p.type === 'organization' ? 'warning' : 'info'} size="sm">{p.type}</Badge>
+                </div>
+                <div className="text-[10px] text-slate-500 space-y-0.5">
+                  <p>ID: {p.idNumber} | {p.phone}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </Card>
+      )}
+
+      {caseRecord.defendants && caseRecord.defendants.length > 0 && (
+        <Card className="p-5">
+          <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.15em] mb-3">Defendants</h4>
+          <div className="grid gap-3">
+            {caseRecord.defendants.map((d) => (
+              <div key={d.id} className="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                <div className="flex items-center justify-between mb-1">
+                  <span className="font-bold text-navy text-xs">{d.name}</span>
+                  <Badge variant={d.type === 'organization' ? 'warning' : 'info'} size="sm">{d.type}</Badge>
+                </div>
+                <div className="text-[10px] text-slate-500 space-y-0.5">
+                  <p>ID: {d.idNumber} | {d.phone}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </Card>
+      )}
+
+      {caseRecord.attachments && caseRecord.attachments.length > 0 && (
+        <Card className="p-5">
+          <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.15em] mb-3">Attachments</h4>
+          <div className="grid gap-2">
+            {caseRecord.attachments.map((a) => (
+              <div key={a.id} className="flex items-center gap-3 bg-slate-50 p-2.5 rounded-lg border border-slate-100">
+                <div className="w-8 h-8 bg-slate-200 rounded-lg flex items-center justify-center shrink-0">
+                  <span className="text-[10px] font-bold text-slate-600">
+                    {a.type.split('/')[1]?.toUpperCase().substring(0, 3) || 'FILE'}
+                  </span>
+                </div>
+                <div className="min-w-0">
+                  <p className="font-bold text-[11px] text-navy truncate">{a.name}</p>
+                  <p className="text-[9px] text-slate-500">{(a.size / 1024 / 1024).toFixed(2)} MB</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </Card>
+      )}
 
       {caseRecord.keyDates.length > 0 && (
         <Card className="p-5">

@@ -98,6 +98,16 @@ export const seedCases: CaseRecord[] = [
       { id: 'up1', timestamp: new Date('2024-12-10'), author: 'Linda Osei', content: 'Case filed with Accra High Court.' },
       { id: 'up2', timestamp: new Date('2025-01-05'), author: 'Linda Osei', content: 'Hearing date scheduled.' },
     ],
+    plaintiffs: [
+      { id: 'p1', name: 'James Mensah', email: 'james.m@example.com', phone: '+233 24 123 4567', address: '12 Independence Ave, Kumasi', idNumber: 'GHA-7890123-4', type: 'individual' }
+    ],
+    defendants: [
+      { id: 'd1', name: 'Estate Regulators', email: 'legal@estatereg.gov.gh', phone: '+233 30 987 6543', address: 'Ministries, Accra', idNumber: 'REG-009182', type: 'organization' }
+    ],
+    attachments: [
+      { id: 'a1', name: 'Mensah_Will_Certified.pdf', size: 2450000, type: 'application/pdf', status: 'completed' },
+      { id: 'a2', name: 'Asset_Inventory_Kumasi.xlsx', size: 1200000, type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', status: 'completed' }
+    ],
   },
   {
     id: 'c102',

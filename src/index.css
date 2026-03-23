@@ -13,6 +13,11 @@
 
   --font-inter: "Inter", sans-serif;
   --font-size-xxs: 0.65rem;
+
+  --shadow-premium: 0 1px 3px rgba(0,0,0,0.04), 0 6px 16px rgba(0,0,0,0.04), 0 24px 48px rgba(0,0,0,0.02);
+  --shadow-premium-lg: 0 4px 6px rgba(0,0,0,0.04), 0 10px 24px rgba(0,0,0,0.06), 0 48px 80px rgba(0,0,0,0.04);
+  --shadow-gold: 0 4px 14px rgba(212, 175, 55, 0.15), 0 1px 3px rgba(212, 175, 55, 0.1);
+  --shadow-navy: 0 4px 14px rgba(15, 23, 42, 0.2), 0 1px 3px rgba(15, 23, 42, 0.1);
 }
 
 /* ===== Keyframe Animations ===== */
@@ -148,23 +153,6 @@
 
 .card-premium {
   @apply bg-white rounded-3xl border-2 border-slate-300/80 shadow-premium transition-all duration-300;
-}
-
-/* ===== Premium Shadows ===== */
-.shadow-premium {
-  box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 6px 16px rgba(0,0,0,0.04), 0 24px 48px rgba(0,0,0,0.02);
-}
-
-.shadow-premium-lg {
-  box-shadow: 0 4px 6px rgba(0,0,0,0.04), 0 10px 24px rgba(0,0,0,0.06), 0 48px 80px rgba(0,0,0,0.04);
-}
-
-.shadow-gold {
-  box-shadow: 0 4px 14px rgba(212, 175, 55, 0.15), 0 1px 3px rgba(212, 175, 55, 0.1);
-}
-
-.shadow-navy {
-  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.2), 0 1px 3px rgba(15, 23, 42, 0.1);
 }
 
 /* ===== Gradient Backgrounds ===== */

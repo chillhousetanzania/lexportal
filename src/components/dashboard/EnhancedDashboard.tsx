@@ -5,9 +5,10 @@ import { DataGrid } from '../ui/DataGrid';
 import { ErrorBoundary } from '../shared/ErrorBoundary';
 import { filterCasesByRole } from '../../utils/rbac';
 import { cn } from '../ui';
+import { EditCaseModal } from '../cases/EditCaseModal';
 import {
   Users, Briefcase, FileText, TrendingUp, Plus,
-  Clock, Activity, ArrowRight, Banknote, TrendingDown, BarChart3, Sparkles
+  Clock, Activity, ArrowRight, Banknote, TrendingDown, BarChart3, Sparkles, Edit2
 } from 'lucide-react';
 import type { UserRole, CaseStatus, CaseRecord } from '../../types';
 
@@ -90,7 +91,7 @@ const WelcomeBanner: React.FC<{ name: string; role: string }> = ({ name, role })
           <Sparkles className="w-4 h-4 text-gold" />
           <span className="text-[10px] text-gold font-bold uppercase tracking-[0.2em]">Welcome back</span>
         </div>
-        <h2 className="text-2xl sm:text-3xl font-black tracking-tight">{name}</h2>
+        <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-white">{name}</h2>
         <p className="text-slate-400 text-sm mt-1 capitalize">{role} — LexPortal Legal Management</p>
       </div>
       <div className="hidden sm:block">
@@ -104,8 +105,9 @@ const WelcomeBanner: React.FC<{ name: string; role: string }> = ({ name, role })
 
 // ===== Admin Dashboard =====
 const EnhancedAdminDashboard: React.FC = () => {
-  const { users, cases, financialRecords, sharedResources, setCurrentPage, authState, setSelectedCase } = useApp();
+  const { users, cases, setCases, financialRecords, sharedResources, setCurrentPage, authState, setSelectedCase, addNotification } = useApp();
   const [isLoading, setIsLoading] = useState(true);
+  const [editingCase, setEditingCase] = useState<CaseRecord | null>(null);
 
   React.useEffect(() => {
     const timer = setTimeout(() => setIsLoading(false), 500);
@@ -140,8 +142,11 @@ const EnhancedAdminDashboard: React.FC = () => {
       key: 'title',
       title: 'Case Title',
       sortable: true,
-      render: (value: string) => (
-        <span className="font-semibold text-sm text-navy">{value}</span>
+      render: (value: string, row: CaseRecord) => (
+        <div>
+          <span className="font-semibold text-sm text-navy block">{value}</span>
+          <span className="text-slate-400 text-[10px] truncate max-w-[200px] mt-0.5 block">{row.description}</span>
+        </div>
       ),
     },
     {
@@ -159,6 +164,24 @@ const EnhancedAdminDashboard: React.FC = () => {
       ),
     },
   ];
+
+  const handleEditSave = (updatedCase: CaseRecord) => {
+    setCases(prev => prev.map(c => c.id === updatedCase.id ? {
+      ...updatedCase,
+      lastUpdated: new Date(),
+      updates: [
+        ...c.updates,
+        {
+          id: 'up' + Date.now(),
+          timestamp: new Date(),
+          author: authState.user!.name,
+          content: 'Case details updated.',
+        }
+      ]
+    } : c));
+    setEditingCase(null);
+    addNotification('success', 'Case details updated successfully.');
+  };
 
   if (isLoading) {
     return (
@@ -237,8 +260,28 @@ const EnhancedAdminDashboard: React.FC = () => {
             setSelectedCase(c);
             setCurrentPage('cases');
           }}
+          renderActions={(c: CaseRecord) => (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setEditingCase(c);
+              }}
+              className="p-2 rounded-xl bg-slate-100 text-slate-600 hover:bg-gold hover:text-navy transition-all duration-300 shadow-sm border border-slate-200"
+              title="Edit Case"
+            >
+              <Edit2 className="w-4 h-4" />
+            </button>
+          )}
         />
       </div>
+
+      {editingCase && (
+        <EditCaseModal
+          initialCase={editingCase}
+          onSave={handleEditSave}
+          onClose={() => setEditingCase(null)}
+        />
+      )}
     </div>
   );
 };
@@ -366,8 +409,9 @@ const EnhancedAccountantDashboard: React.FC = () => {
 
 // ===== Litigator Dashboard =====
 const EnhancedLitigatorDashboard: React.FC = () => {
-  const { cases, authState, setCurrentPage, setSelectedCase } = useApp();
+  const { cases, setCases, authState, setCurrentPage, setSelectedCase, addNotification } = useApp();
   const userId = authState.user!.id;
+  const [editingCase, setEditingCase] = useState<CaseRecord | null>(null);
 
   const myCases = useMemo(() => filterCasesByRole(cases, 'litigator', userId), [cases, userId]);
 
@@ -391,8 +435,11 @@ const EnhancedLitigatorDashboard: React.FC = () => {
       key: 'title',
       title: 'Case Title',
       sortable: true,
-      render: (value: string) => (
-        <span className="font-semibold text-sm text-navy">{value}</span>
+      render: (value: string, row: CaseRecord) => (
+        <div>
+          <span className="font-semibold text-sm text-navy block">{value}</span>
+          <span className="text-slate-400 text-[10px] truncate max-w-[200px] mt-0.5 block">{row.description}</span>
+        </div>
       ),
     },
     {
@@ -410,6 +457,24 @@ const EnhancedLitigatorDashboard: React.FC = () => {
       ),
     },
   ];
+
+  const handleEditSave = (updatedCase: CaseRecord) => {
+    setCases(prev => prev.map(c => c.id === updatedCase.id ? {
+      ...updatedCase,
+      lastUpdated: new Date(),
+      updates: [
+        ...c.updates,
+        {
+          id: 'up' + Date.now(),
+          timestamp: new Date(),
+          author: authState.user!.name,
+          content: 'Case details updated.',
+        }
+      ]
+    } : c));
+    setEditingCase(null);
+    addNotification('success', 'Case details updated successfully.');
+  };
 
   return (
     <div className="p-6 lg:p-8">
@@ -465,8 +530,28 @@ const EnhancedLitigatorDashboard: React.FC = () => {
             setSelectedCase(c);
             setCurrentPage('cases');
           }}
+          renderActions={(c: CaseRecord) => (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setEditingCase(c);
+              }}
+              className="p-2 rounded-xl bg-slate-100 text-slate-600 hover:bg-gold hover:text-navy transition-all duration-300 shadow-sm border border-slate-200"
+              title="Edit Case"
+            >
+              <Edit2 className="w-4 h-4" />
+            </button>
+          )}
         />
       </div>
+
+      {editingCase && (
+        <EditCaseModal
+          initialCase={editingCase}
+          onSave={handleEditSave}
+          onClose={() => setEditingCase(null)}
+        />
+      )}
     </div>
   );
 };

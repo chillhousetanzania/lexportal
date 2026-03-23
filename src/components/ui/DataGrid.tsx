@@ -17,6 +17,7 @@ interface DataGridProps<T> {
   filterable?: boolean;
   className?: string;
   onRowClick?: (row: T) => void;
+  renderActions?: (row: T) => React.ReactNode;
 }
 
 export function DataGrid<T extends Record<string, any>>({
@@ -26,6 +27,7 @@ export function DataGrid<T extends Record<string, any>>({
   filterable = true,
   className,
   onRowClick,
+  renderActions,
 }: DataGridProps<T>) {
   const [searchQuery, setSearchQuery] = useState('');
   const [sortColumn, setSortColumn] = useState<keyof T | null>(null);
@@ -154,16 +156,19 @@ export function DataGrid<T extends Record<string, any>>({
                   </td>
                 ))}
                 <td className="px-6 py-4 text-right">
-                  <button 
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onRowClick?.(row);
-                    }}
-                    className="p-2 rounded-xl bg-slate-100 text-slate-600 hover:bg-gold hover:text-navy transition-all duration-300 shadow-sm border border-slate-200"
-                    title="View Details"
-                  >
-                    <Eye className="w-4 h-4" />
-                  </button>
+                  <div className="flex items-center justify-end gap-2">
+                    <button 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onRowClick?.(row);
+                      }}
+                      className="p-2 rounded-xl bg-slate-100 text-slate-600 hover:bg-gold hover:text-navy transition-all duration-300 shadow-sm border border-slate-200"
+                      title="View Details"
+                    >
+                      <Eye className="w-4 h-4" />
+                    </button>
+                    {renderActions && renderActions(row)}
+                  </div>
                 </td>
               </tr>
             ))}

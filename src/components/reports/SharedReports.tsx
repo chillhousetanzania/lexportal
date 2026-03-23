@@ -61,7 +61,7 @@ const SharedReportsContent: React.FC = () => {
           <div className="relative z-10 flex items-start justify-between">
             <div>
               <Badge variant={typeVariant[selectedResource.type]} size="sm">{selectedResource.type}</Badge>
-              <h2 className="text-2xl font-black mt-3 tracking-tight">{selectedResource.title}</h2>
+              <h2 className="text-2xl font-black mt-3 tracking-tight text-white">{selectedResource.title}</h2>
             </div>
           </div>
         </div>

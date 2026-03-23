@@ -13,6 +13,37 @@ export interface CaseUpdate {
   content: string;
 }
 
+export interface PersonEntity {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  address: string;
+  idNumber: string;
+  type: 'individual' | 'organization';
+}
+
+export interface CaseAttachment {
+  id: string;
+  name: string;
+  size: number;
+  type: string;
+  status: 'pending' | 'uploading' | 'completed' | 'error';
+}
+
+export interface CourtSessionRecord {
+  id: string;
+  honorable: string;
+  courtClerk: string;
+  clientRole: string;
+  respondents: string[];
+  note: string;
+  order: string;
+  tarehe: string;
+  muda: string;
+  createdAt: Date;
+}
+
 export interface CaseRecord {
   id: string;
   caseNumber: string;
@@ -25,6 +56,10 @@ export interface CaseRecord {
   lastUpdated: Date;
   keyDates: KeyDate[];
   updates: CaseUpdate[];
+  plaintiffs?: PersonEntity[];
+  defendants?: PersonEntity[];
+  attachments?: CaseAttachment[];
+  courtSessions?: CourtSessionRecord[];
 }
 
 export interface CreateCaseRequest {
