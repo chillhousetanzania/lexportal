@@ -1,6 +1,7 @@
 import React from 'react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import { ChevronDown } from 'lucide-react';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -218,24 +219,29 @@ export const Select: React.FC<SelectProps> = ({
           {required && <span className="text-gold text-xs">*</span>}
         </label>
       )}
-      <select
-        value={value}
-        onChange={onChange}
-        required={required}
-        disabled={disabled}
-        className={cn(
-          'w-full px-4 py-3 bg-white border-2 border-slate-300 rounded-xl outline-none transition-all duration-300 font-bold text-navy text-sm appearance-none',
-          'hover:border-slate-400',
-          'focus:border-gold focus:ring-4 focus:ring-gold/15',
-          disabled && 'opacity-40 cursor-not-allowed'
-        )}
-      >
-        {options.map(opt => (
-          <option key={opt.value} value={opt.value}>
-            {opt.label}
-          </option>
-        ))}
-      </select>
+      <div className="relative">
+        <select
+          value={value}
+          onChange={onChange}
+          required={required}
+          disabled={disabled}
+          className={cn(
+            'w-full px-4 pr-10 py-3 bg-white border-2 border-slate-300 rounded-xl outline-none transition-all duration-300 font-bold text-navy text-sm appearance-none',
+            'hover:border-slate-400',
+            'focus:border-gold focus:ring-4 focus:ring-gold/15',
+            disabled && 'opacity-40 cursor-not-allowed'
+          )}
+        >
+          {options.map(opt => (
+            <option key={opt.value} value={opt.value}>
+              {opt.label}
+            </option>
+          ))}
+        </select>
+        <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+          <ChevronDown className="w-4 h-4" />
+        </div>
+      </div>
     </div>
   );
 };
